@@ -13,6 +13,7 @@ namespace Sunbox.Avatars {
     public class AvatarCustomization : MonoBehaviour {
 
         private const string NAME = "[AvatarCustomization]";
+        public static AvatarCustomization Instance = null;
 
         
         public enum AvatarGender {
@@ -59,6 +60,7 @@ namespace Sunbox.Avatars {
         public const string SECTION_BODY_PARAMETERS = "Body Parameters";
         public const string SECTION_FACE_PARAMETERS = "Face Parameters";
         public const string SECTION_FACE_STYLES = "Features";
+        public const string SECTION_NONUSED_FACE_STYLES = "NonUsedFeatures";
 
         public HideBlendShapeIndex[] HideBlendShapeIndices {
             get {
@@ -164,22 +166,22 @@ namespace Sunbox.Avatars {
         [AvatarIntegerField("Hair Material", "hairMaterialIndex", Section = SECTION_FACE_STYLES, ArrayDependancyField = "HairItems", IsVariationField = true)]
         public int HairMaterialIndex = 0;
 
-        [AvatarIntegerField("Facial Hair Style", "facialHairStyleIndex", Section = SECTION_FACE_STYLES, ArrayDependancyField = "FacialHairItems")]
+        [AvatarIntegerField("Facial Hair Style", "facialHairStyleIndex", Section = SECTION_NONUSED_FACE_STYLES, ArrayDependancyField = "FacialHairItems")]
         public int FacialHairStyleIndex = 0;
 
-        [AvatarIntegerField("Facial Hair Material", "facialHairMaterialIndex", Section = SECTION_FACE_STYLES, ArrayDependancyField = "FacialHairItems", IsVariationField = true)]
+        [AvatarIntegerField("Facial Hair Material", "facialHairMaterialIndex", Section = SECTION_NONUSED_FACE_STYLES, ArrayDependancyField = "FacialHairItems", IsVariationField = true)]
         public int FacialHairMaterialIndex = 0;
 
         [AvatarIntegerField("Eye Material", "eyeMaterialIndex", Section = SECTION_FACE_STYLES, ArrayDependancyField = "EyeMaterials")]
         public int EyeMaterialIndex = 0;
 
-        [AvatarIntegerField("Lashes Material", "lashesMaterialIndex", Section = SECTION_FACE_STYLES, ArrayDependancyField = "LashesMaterials")]
+        [AvatarIntegerField("Lashes Material", "lashesMaterialIndex", Section = SECTION_NONUSED_FACE_STYLES, ArrayDependancyField = "LashesMaterials")]
         public int LashesMaterialIndex = 0;
 
         [AvatarIntegerField("Brow Material", "browMaterialIndex", Section = SECTION_FACE_STYLES, ArrayDependancyField = "BrowMaterials")]
         public int BrowMaterialIndex = 0;
 
-        [AvatarIntegerField("Nails Material", "nailsMaterialIndex", Section = SECTION_FACE_STYLES, ArrayDependancyField = "NailMaterials")]
+        [AvatarIntegerField("Nails Material", "nailsMaterialIndex", Section = SECTION_NONUSED_FACE_STYLES, ArrayDependancyField = "NailMaterials")]
         public int NailsMaterialIndex = 0;
 
         public ClothingItem ClothingItemHat;
@@ -215,14 +217,11 @@ namespace Sunbox.Avatars {
         private GameObject _hairGameObject;
         private float _eyesClosed = 0;
         private float _eyesClosedExpression =0;
-        private float _adjustedBodyFat = 0;
-        private float _adjustedBodyMuscle = 0;
         private float _blinkTimer = 0;
         
         void Start() {
-            DontDestroyOnLoad(gameObject);
             SetGender(CurrentGender, true);
-
+            Instance = this;
             UpdateCustomization();
             UpdateClothing_Internal();
         }

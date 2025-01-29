@@ -71,6 +71,7 @@
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarCustomization.cs" />
     <Compile Include="Assets\InputHandler.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\FacialHairItem.cs" />
+    <Compile Include="Assets\DeleteTable.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarLocomotion.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\HairItemBase.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UHair.cs" />

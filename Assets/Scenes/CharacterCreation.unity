@@ -1140,7 +1140,7 @@ MonoBehaviour:
   usernameInput: {fileID: 1449467065}
   passwordInput: {fileID: 1144621686}
   AlertMessage: {fileID: 1572194635}
-  Panel: {fileID: 189447697}
+  Panel: {fileID: 1618693148}
   signupButton: {fileID: 9917701}
 --- !u!1 &122725582
 GameObject:
@@ -1479,7 +1479,9 @@ MonoBehaviour:
   passwordInput: {fileID: 1630237882}
   AlertMessage: {fileID: 1536210191}
   loginButton: {fileID: 374565198}
-  Panel: {fileID: 1618693148}
+  SidePanel: {fileID: 295543849}
+  AvatarReferences: {fileID: 11400000, guid: 64fdaf6301ddadf4984fbd23b73c1671, type: 2}
+  Avatar: {fileID: 814803321}
 --- !u!1 &167477035
 GameObject:
   m_ObjectHideFlags: 0
@@ -20487,7 +20489,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 18004579}
   m_Direction: 2
   m_Value: 1.0000015
-  m_Size: 0.93333346
+  m_Size: 0.93333334
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

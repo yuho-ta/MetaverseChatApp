@@ -8,6 +8,8 @@ using System.Data;
 using Mono.Data.SqliteClient;
 using System.IO;
 using System;
+using System.Collections.Generic;
+
 
 namespace SQLiter
 {
@@ -59,6 +61,15 @@ namespace SQLiter
 		/// </summary>
 		private const string COL_NAME = "name"; 
 		private const string COL_PASSWORD = "password";
+		private const string COL_HAT = "hat";
+		private const string COL_TOP = "top";
+		private const string COL_TOP_MATERIAL = "top_material";
+		private const string COL_BOTTOM = "bottom";
+		private const string COL_GLASSES = "glasses";
+		private const string COL_SKIN = "skin";
+		private const string COL_HAIR_MATERIAL = "hair_material";
+		private const string COL_EYE_MATERIAL = "eye_material";
+		private const string COL_BROW_MATERIAL = "brow_material";
 		private const string COL_PLAYER_ID = "player_id"; 
         private const string COL_FRIEND_ID = "friend_id";
         private const string COL_MESSAGE_ID = "message_id";
@@ -152,10 +163,19 @@ namespace SQLiter
 
 			// here we check if the table you want to use exists or not.  If it doesn't exist we create it.
 			 _command.CommandText = $"CREATE TABLE IF NOT EXISTS {SQL_TABLE_NAME} (" +
-                $"{COL_PLAYER_ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                $"{COL_NAME} TEXT UNIQUE, " +
-                $"{COL_PASSWORD} TEXT)";
-            _command.ExecuteNonQuery();
+				$"{COL_PLAYER_ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				$"{COL_NAME} TEXT UNIQUE, " +
+				$"{COL_PASSWORD} TEXT, " +
+				$"{COL_HAT} INTEGER, " +
+				$"{COL_TOP} INTEGER, " +
+				$"{COL_TOP_MATERIAL} INTEGER, " +
+				$"{COL_BOTTOM} INTEGER, " +
+				$"{COL_GLASSES} INTEGER, " +
+				$"{COL_SKIN} INTEGER, " +
+				$"{COL_HAIR_MATERIAL} INTEGER, " +
+				$"{COL_EYE_MATERIAL} INTEGER, " +
+				$"{COL_BROW_MATERIAL} INTEGER)";
+			_command.ExecuteNonQuery();
 
             // FRIENDS_TABLE
             _command.CommandText = $"CREATE TABLE IF NOT EXISTS {FRIENDS_TABLE_NAME} (" +
@@ -210,7 +230,40 @@ namespace SQLiter
 				Debug.Log(_sqlString);
 			ExecuteNonQuery(_sqlString);
 		}
+		public void InsertClothInfo(int playerId, Dictionary<string, int> clothData)
+		{
+			string _sqlString = "INSERT OR REPLACE INTO " + SQL_TABLE_NAME + " (";
 
+			List<string> columns = new List<string>
+			{
+				COL_HAT, COL_TOP, COL_TOP_MATERIAL, COL_BOTTOM, COL_GLASSES,
+				COL_SKIN, COL_HAIR_MATERIAL, COL_EYE_MATERIAL, COL_BROW_MATERIAL
+			};
+
+			_sqlString += string.Join(", ", columns);
+			_sqlString += ") VALUES (";
+
+			List<string> values = new List<string>();
+			foreach (string column in columns)
+			{
+				if (clothData.ContainsKey(column))
+				{
+					values.Add(clothData[column].ToString());
+				}
+				else
+				{
+					values.Add("NULL"); 
+				}
+			}
+
+			_sqlString = _sqlString.Insert(_sqlString.IndexOf('(') + 1, playerId.ToString() + ", ");
+			_sqlString += string.Join(", ", values) + ");";
+
+			if (DebugMode)
+				Debug.Log(_sqlString);
+
+			ExecuteNonQuery(_sqlString);
+		}
 		#endregion
 
 		#region Query Values
@@ -244,21 +297,20 @@ namespace SQLiter
 			_connection.Close();
 		}
 
-		public bool ValidateUser(string username, string password)
+		public int ValidateUser(string name, string password)
 		{
-			bool isValid = false;
-
+			int playerId = -1;
 			try
 			{
 				_connection.Open();
 				Debug.Log("Connection opened successfully!");
 				// Use parameterized query to prevent SQL injection
-				_command.CommandText = "SELECT * FROM " + SQL_TABLE_NAME + " WHERE " + COL_NAME + " = '" + username + "' AND " + COL_PASSWORD + " = '" + password + "'";
+				_command.CommandText = $"SELECT {COL_PLAYER_ID} FROM {SQL_TABLE_NAME} WHERE {COL_NAME} = name AND {COL_PASSWORD} = password";
 
 				_reader = _command.ExecuteReader();
 				if (_reader.Read())
 				{
-					isValid = true;
+					playerId = Convert.ToInt32(_reader[COL_PLAYER_ID]);
 				}
 
 				_reader.Close();
@@ -272,7 +324,48 @@ namespace SQLiter
 				_connection.Close();
 			}
 
-			return isValid;
+			return playerId;
+		}
+
+		public Dictionary<string, int> GetPlayerCustomization(string name, string password)
+		{
+			Dictionary<string, int> playerData = new Dictionary<string, int>();
+			try
+			{
+				_connection.Open();
+
+				_command.CommandText = $"SELECT {COL_HAT}, {COL_TOP}, {COL_TOP_MATERIAL}, {COL_BOTTOM}, {COL_GLASSES}, " +
+                       $"{COL_SKIN}, {COL_HAIR_MATERIAL}, {COL_EYE_MATERIAL}, {COL_BROW_MATERIAL} " +
+                       $"FROM {SQL_TABLE_NAME} WHERE {COL_NAME} = name AND {COL_PASSWORD} = password";
+
+				
+				using (var reader = _command.ExecuteReader())
+				{
+					if (reader.Read())
+					{
+						playerData[COL_HAT] = reader.GetInt32(0);
+						playerData[COL_TOP] = reader.GetInt32(1);
+						playerData[COL_TOP_MATERIAL] = reader.GetInt32(2);
+						playerData[COL_BOTTOM] = reader.GetInt32(3);
+						playerData[COL_GLASSES] = reader.GetInt32(4);
+						playerData[COL_SKIN] = reader.GetInt32(5);
+						playerData[COL_HAIR_MATERIAL] = reader.GetInt32(6);
+						playerData[COL_EYE_MATERIAL] = reader.GetInt32(7);
+						playerData[COL_BROW_MATERIAL] = reader.GetInt32(8);
+					}
+				}
+
+				_reader.Close();
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError("Error validating user: " + ex.Message);
+			}
+			finally
+			{
+				_connection.Close();
+			}
+			return playerData;
 		}
 
 		/// <summary>
@@ -281,7 +374,7 @@ namespace SQLiter
 		/// <param name="column"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public int QueryInt(string column, string value)
+		public int GetPlayerId(string column, string value)
 		{
 			int sel = -1;
 			_connection.Open();
@@ -341,6 +434,33 @@ namespace SQLiter
 		public void DeletePlayer(string nameKey)
 		{
 			ExecuteNonQuery("DELETE FROM " + SQL_TABLE_NAME + " WHERE " + COL_NAME + "='" + nameKey + "'");
+		}
+		public void DropTable(string tableName)
+		{
+			string dropTableSQL = $"DROP TABLE IF EXISTS {tableName};";
+			
+			if (_connection == null)
+			{
+				Debug.LogError("Connection is not initialized.");
+				return;
+			}
+			
+			try
+			{
+				_command = _connection.CreateCommand();
+				_command.CommandText = dropTableSQL;
+				_command.ExecuteNonQuery();
+				Debug.Log($"Table {tableName} has been dropped successfully.");
+			}
+			catch (Exception ex)
+			{
+				Debug.LogError($"Error dropping table {tableName}: {ex.Message}");
+			}
+			finally
+			{
+				_connection.Close();
+				_connection = null;
+			}
 		}
 		#endregion
 

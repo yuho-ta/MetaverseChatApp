@@ -30,14 +30,16 @@ public class SignUpController : MonoBehaviour
         }
         else
         {
-            if (SQLiter.SQLite.Instance.ValidateUser(username, password))
+            int playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);
+            Debug.Log($"   PlayerId:{playerId}");
+            if (playerId != -1)
             {
                 AlertMessage.SetActive(true);
             }
             else
             {
-                SQLiter.SQLite.Instance.InsertPlayer(username, password);
                 Panel.SetActive(true);
+                SQLiter.SQLite.Instance.InsertPlayer(username, password);
             }
         }
     }

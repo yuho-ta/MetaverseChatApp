@@ -8,6 +8,8 @@ using System;
 using UnityEngine.Events;
 using System.Collections.Generic;
 using TMPro;
+using SQLiter;
+using Player;
 
 namespace Sunbox.Avatars {
 
@@ -57,6 +59,9 @@ namespace Sunbox.Avatars {
         private UClothingItem _hiddenGlasses;
         
         private List<SliderWrapper> _sliders = new List<SliderWrapper>();
+        private static Dictionary<string, int> clothData = new Dictionary<string, int>();
+
+
 
         void Start() {
             _cameraPosition = Camera.transform.position;
@@ -93,6 +98,8 @@ namespace Sunbox.Avatars {
                 SidePanel.SetActive(true);
                 Camera.transform.position = _enlargedCameraPosition;
                 Camera.transform.rotation = Quaternion.Euler(_enlargedCameraRotation);
+                Debug.Log(AvatarCustomization.ToConfigString(AvatarCustomization.Instance));
+                SQLiter.SQLite.Instance.InsertClothInfo(Player.LoginController.playerId, clothData);
             });
         }
 
@@ -205,8 +212,30 @@ namespace Sunbox.Avatars {
                     MinValue = floatFieldAttribute.SourceMinValue,
                     MaxValue = floatFieldAttribute.SourceMaxValue
                 };
-
+                
                 slider.OnValueChanged = (value) => {
+                    switch (floatFieldAttribute.DisplayName.ToLower()) 
+                    {
+                        case "skin":
+                            clothData["skin"] = (int)value;
+                            break;
+
+                        case "eye material":
+                            clothData["eye_material"] = (int)value;
+                            break;
+
+                        case "hair material":
+                            clothData["hair_material"] = (int)value;
+                            break;
+
+                        case "brow material":
+                            clothData["brow_material"] = (int)value;
+                            break;
+
+                        default:
+                            Debug.LogWarning($"Unknown field: {field}");
+                            break;
+                    }
                     field.SetValue(Avatar, (float) value);
                     Avatar.UpdateCustomization();
                 };
@@ -336,9 +365,52 @@ namespace Sunbox.Avatars {
                 UpdateSliderText_Internal(_selectedClothingItem != null ? _selectedClothingItem.Variations[_avatar.GetClothingItemVariationIndex(_slotType)].name : "");
                 
                 _dropdown.ClearOptions();
-                _dropdown.AddOptions(_avatar.AvatarReferences.AvailableClothingItems.Where(item => item.SlotType == _slotType).Select(item => item.Name).ToList());
-                
+                List<string> list = _avatar.AvatarReferences.AvailableClothingItems.Where(item => item.SlotType == _slotType).Select(item => item.Name).ToList();
+                _dropdown.AddOptions(list);
+            
                 _dropdown.onValueChanged.AddListener((index) => {
+                    Debug.Log($"   cloth:{list[index]}");
+                    if (list != null && _avatar.AvatarReferences.AvailableClothingItems != null && index >= 0 && index < list.Count)
+                    {
+                        List<string> AvailableClothinglist = _avatar.AvatarReferences.AvailableClothingItems.Where(item => item.SlotType == _slotType).Select(item => item.Name).ToList();
+                        int indexInList = AvailableClothinglist.IndexOf(list[index]);
+
+                        if (indexInList != -1)  // Ensure the item exists in the list
+                        {
+                            Debug.Log($"   cloth:{indexInList}");
+                            switch (_slotType)
+                            {
+                                case SlotType.Hat:
+                                    clothData["hat"] = indexInList;
+                                    break;
+
+                                case SlotType.Top:
+                                    clothData["top"] = indexInList;
+                                    break;
+
+                                case SlotType.Bottom:
+                                    clothData["bottom"] = indexInList;
+                                    break;
+
+                                case SlotType.Glasses:
+                                    clothData["glasses"] = indexInList;
+                                    break;
+
+                                default:
+                                    Debug.LogWarning($"Unknown field: {_slotType}");
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Debug.LogError($"Item not found in AvailableClothingItems! index: {index}");
+                        }
+                    }
+                    else
+                    {
+                        Debug.LogError($"Invalid index ({index}) or null list detected!");
+                    }
+                    
                     _selectedClothingItem = _availableClothingItems[index];
                     _selectedClothingItemIndex = index;
 
@@ -414,6 +486,10 @@ namespace Sunbox.Avatars {
                 _slider.wholeNumbers = true;
                 _slider.onValueChanged.RemoveAllListeners();
                 _slider.onValueChanged.AddListener((value) => {
+                    if (_slotType == SlotType.Top)
+                    {
+                        clothData["top_material"] = (int)value;
+                    }
                     _avatar.SetClothingItemVariation(_slotType, (int) value);
                     _avatar.UpdateClothing();
                     UpdateSliderText_Internal(_selectedClothingItem.Variations[(int) value].name);
