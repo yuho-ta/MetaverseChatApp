@@ -28,19 +28,25 @@ namespace Sunbox.Avatars {
         public Button FaceButton;
         public Button ClothingButton;
 
+        public Button FinishButton;
+
         [Space(20)]
         public GameObject SliderTemplate;
         public GameObject TitleTemplate;
         public GameObject ClothingItemDropdownTemplate;
+        public GameObject Canvas;
+        public GameObject SidePanel;
+
+        public GameObject SignUpPanel;
+        public GameObject LoginPanel;
 
         [Space(20)]
         public RectTransform ContentTransform;
 
         private Vector3 _cameraPosition;
         private Vector3 _cameraRotation;
-        private Vector3 _zoomedPosition = new Vector3(0,2,7);
-        private Vector3 _zoomedRotation = new Vector3(5,90, 0);
-        private bool _isZoomed = false;
+        private Vector3 _enlargedCameraPosition = new Vector3(5,1,10);
+        private Vector3 _enlargedCameraRotation = new Vector3(8,180,0);
 
         private ClothingDropdownWrapper _hatClothingDropdown;
         private ClothingDropdownWrapper _topClothingDropdown;
@@ -55,6 +61,9 @@ namespace Sunbox.Avatars {
         void Start() {
             _cameraPosition = Camera.transform.position;
             _cameraRotation = Camera.transform.eulerAngles;
+            SidePanel.SetActive(false);
+            SignUpPanel.SetActive(false);
+            LoginPanel.SetActive(false);
 
             MaleButton.onClick.AddListener(() => Avatar.SetGender(AvatarCustomization.AvatarGender.Male, true));
             FemaleButton.onClick.AddListener(() => Avatar.SetGender(AvatarCustomization.AvatarGender.Female, true));
@@ -62,7 +71,6 @@ namespace Sunbox.Avatars {
             FaceButton.onClick.AddListener(() => {
                 ClearSectionContent_Internal();
                 ShowSliderList_Internal(AvatarCustomization.SECTION_FACE_STYLES);
-                _isZoomed = false;
 
                 _hiddenGlasses = Avatar.GetComponentsInChildren<UClothingItem>().FirstOrDefault(item => item.ClothingItem.SlotType == SlotType.Glasses);
                 if (_hiddenGlasses != null) {
@@ -72,31 +80,23 @@ namespace Sunbox.Avatars {
             ClothingButton.onClick.AddListener(() => {
                 ClearSectionContent_Internal();
                 ShowClothingList_Internal();
-                _isZoomed = false;
 
                 if (_hiddenGlasses != null) {
                     _hiddenGlasses.gameObject.SetActive(true);
                 }
             });
-
             SliderTemplate.SetActive(false);
             TitleTemplate.SetActive(false);
             ClothingItemDropdownTemplate.SetActive(false);
+            FinishButton.onClick.AddListener(() => {
+                Canvas.SetActive(false);
+                SidePanel.SetActive(true);
+                Camera.transform.position = _enlargedCameraPosition;
+                Camera.transform.rotation = Quaternion.Euler(_enlargedCameraRotation);
+            });
         }
 
         void Update() {
-            float smoothSpeed = 2f; 
-            Camera.transform.position = Vector3.Lerp(
-                Camera.transform.position,
-                _isZoomed ? _zoomedPosition : _cameraPosition,
-                1 - Mathf.Exp(-smoothSpeed * Time.deltaTime)
-            );
-
-            Camera.transform.rotation = Quaternion.Lerp(
-                Camera.transform.rotation,
-                _isZoomed ? Quaternion.Euler(_zoomedRotation) : Quaternion.Euler(_cameraRotation),
-                1 - Mathf.Exp(-smoothSpeed * Time.deltaTime)
-            );
         }
 
         private void UpdateSliderList_Internal() {
