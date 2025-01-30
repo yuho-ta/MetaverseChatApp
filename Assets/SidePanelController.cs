@@ -5,23 +5,25 @@ using UnityEngine.UI;
 
 public class SidePanelController : MonoBehaviour
 {
-    public Button MessageButton;
+    public Button DanceButton;
     public Button FriendButton;
-    public GameObject InputField;
+    public Button ClothesButton;
+    public GameObject DancePanel;
+    public GameObject Canvas;
+    public GameObject SidePanel;
     void Start()
     {
-        InputField.SetActive(false);
-        MessageButton.onClick.AddListener(() => {
-                InputField.SetActive(true);
+        DancePanel.SetActive(false);
+        DanceButton.onClick.AddListener(() => {
+            DancePanel.SetActive(!DancePanel.activeSelf);
         });
         FriendButton.onClick.AddListener(() => {
                 
         });
+        ClothesButton.onClick.AddListener(() => {
+                Canvas.SetActive(true);
+                SidePanel.SetActive(false);
+        });
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

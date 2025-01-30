@@ -1,6 +1,7 @@
 using System.Collections; 
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovements : MonoBehaviour
 {
@@ -10,17 +11,23 @@ public class PlayerMovements : MonoBehaviour
     public float maxSpeed = 1f; 
     public float moveSpeed = 2f; 
 
-    public Transform cameraTransform; // カメラのTransform
-    public Vector3 cameraOffset = new Vector3(0, -0.5f, 1); // カメラのオフセット
+    public Transform cameraTransform; 
+    public Vector3 cameraOffset = new Vector3(0, -0.5f, 1);
 
-    public Canvas canvas; // Canvasオブジェクト
+    public Canvas canvas; 
 
     private float speedX = 0f; 
     private float speedY = 0f; 
-
+    public Button DanceButton;
+    public Button ClapButton;
+    public Button WaveButton;
+    void Start(){
+        DanceButton.onClick.AddListener(PlayDance);
+        ClapButton.onClick.AddListener(PlayClap);
+        WaveButton.onClick.AddListener(PlayWave);
+    }
     void Update()
     {
-        // Canvasがアクティブな場合は動かない
         if (canvas != null && canvas.gameObject.activeSelf)
         {
             animator.SetFloat("MoveX", 0f);
@@ -49,24 +56,43 @@ public class PlayerMovements : MonoBehaviour
             targetSpeedX = -1f;
         }
 
-        // 水平方向の速度を徐々に変化させる
         speedX = Mathf.MoveTowards(speedX, targetSpeedX * maxSpeed, (targetSpeedX == 0 ? deceleration : acceleration) * Time.deltaTime);
 
-        // 垂直方向の速度を徐々に変化させる
         speedY = Mathf.MoveTowards(speedY, targetSpeedY * maxSpeed, (targetSpeedY == 0 ? deceleration : acceleration) * Time.deltaTime);
 
-        // Animatorパラメータの更新
         animator.SetFloat("MoveX", speedX);
         animator.SetFloat("MoveY", speedY);
 
-        // キャラクターの移動
         Vector3 movement = new Vector3(speedX, 0, speedY) * moveSpeed * Time.deltaTime;
         transform.Translate(movement, Space.World);
 
-        // カメラをプレイヤーに追従させる
         if (cameraTransform != null)
         {
             cameraTransform.position = transform.position + cameraOffset;
         }
+    }
+    public void PlayDance()
+    {
+        ResetAllAnimations();
+        animator.SetTrigger("Dance01");
+    }
+
+    public void PlayWave()
+    {
+        ResetAllAnimations();
+        animator.SetTrigger("Wave");
+    }
+
+    public void PlayClap()
+    {
+        ResetAllAnimations();
+        animator.SetTrigger("Clap");
+    }
+
+    private void ResetAllAnimations()
+    {
+        animator.ResetTrigger("Dance01");
+        animator.ResetTrigger("Wave");
+        animator.ResetTrigger("Clap");
     }
 }

@@ -13,13 +13,13 @@ namespace Player{
     {
         public TMP_InputField usernameInput;
         public TMP_InputField passwordInput;
-        public static int playerId;
         public GameObject AlertMessage;
         public GameObject LoginPanel;
         public Button loginButton;
         public GameObject SidePanel;
         public AvatarReferences AvatarReferences;
         public AvatarCustomization Avatar;
+        public PlayerController playerController;
 
         void Start()
         {
@@ -31,9 +31,16 @@ namespace Player{
         {
             string username = usernameInput.text;
             string password = passwordInput.text;
-            playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);
+            Debug.Log($"username: '{username}', password: '{password}'");
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                AlertMessage.SetActive(true);
+            }
+            playerController.username = username;
+            playerController.password = password;
+            playerController.playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);
 
-            if (playerId != -1)
+            if (playerController.playerId != -1)
             {
                 Dictionary<string, int> playerData = SQLiter.SQLite.Instance.GetPlayerCustomization(username, password);
                 Debug.Log($"{playerData}");
@@ -74,8 +81,8 @@ namespace Player{
                     {
                         if (top != null)
                         {
+                            Avatar.AttachClothingItem(top);
                             Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Top, index);
-                            Avatar.AttachClothingItem(top, index);
                             Avatar.UpdateClothing();
                         }
                     }
@@ -83,8 +90,8 @@ namespace Player{
                     {
                         if (hat != null)
                         {
+                            Avatar.AttachClothingItem(hat);
                             Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Hat, index);
-                            Avatar.AttachClothingItem(hat, index);
                             Avatar.UpdateClothing();
                         }
                     }
@@ -92,8 +99,8 @@ namespace Player{
                     {
                         if (bottom != null)
                         {
+                            Avatar.AttachClothingItem(bottom);
                             Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Bottom, index);
-                            Avatar.AttachClothingItem(bottom, index);
                             Avatar.UpdateClothing();
                         }
                     }
@@ -101,8 +108,8 @@ namespace Player{
                     {
                         if (glasses != null)
                         {
+                            Avatar.AttachClothingItem(glasses);
                             Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Glasses, index);
-                            Avatar.AttachClothingItem(glasses, index);
                             Avatar.UpdateClothing();
                         }
                     }
@@ -110,8 +117,8 @@ namespace Player{
                     {
                         if (shoes != null)
                         {
+                            Avatar.AttachClothingItem(shoes);
                             Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Shoes, index);
-                            Avatar.AttachClothingItem(shoes, index);
                             Avatar.UpdateClothing();
                         }
                     }
@@ -125,14 +132,13 @@ namespace Player{
                         }
                     }
                 }
+                SidePanel.SetActive(true);
+                LoginPanel.SetActive(false);
             }
             else
             {
                 AlertMessage.SetActive(true);
             }
-            SidePanel.SetActive(true);
-            LoginPanel.SetActive(false);
         }
     }
 }
-

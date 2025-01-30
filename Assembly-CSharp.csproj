@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\HairItem.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UClothingItem.cs" />
+    <Compile Include="Assets\PlayerController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UUIRotation.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarReferences.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarCustomization.cs" />

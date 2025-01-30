@@ -59,6 +59,7 @@ namespace Sunbox.Avatars {
         private UClothingItem _hiddenGlasses;
         
         private List<SliderWrapper> _sliders = new List<SliderWrapper>();
+        public PlayerController playerController;
 
 
 
@@ -97,7 +98,7 @@ namespace Sunbox.Avatars {
                 SidePanel.SetActive(true);
                 Camera.transform.position = _enlargedCameraPosition;
                 Camera.transform.rotation = Quaternion.Euler(_enlargedCameraRotation);
-                SQLiter.SQLite.Instance.UpdateClothInfo(Player.LoginController.playerId, AvatarCustomization.ToConfigString(AvatarCustomization.Instance));
+                SQLiter.SQLite.Instance.UpdateClothInfo(playerController.playerId, AvatarCustomization.ToConfigString(AvatarCustomization.Instance));
             });
         }
 

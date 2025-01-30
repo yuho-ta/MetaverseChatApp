@@ -359,6 +359,7 @@
 "Assets/DeleteTable.cs"
 "Assets/InputHandler.cs"
 "Assets/LoginController.cs"
+"Assets/PlayerController.cs"
 "Assets/PlayerMovement.cs"
 "Assets/SidePanelController.cs"
 "Assets/SignUpController.cs"

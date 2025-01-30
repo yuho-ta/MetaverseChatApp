@@ -225,7 +225,6 @@ namespace SQLiter
 		{
 			name = name.ToLower();
 			player_count += 1;
-		    int player_id = player_count;
 			// note - this will replace any item that already exists, overwriting them.  
 			// normal INSERT without the REPLACE will throw an error if an item already exists
 			_sqlString = "INSERT OR REPLACE INTO " + SQL_TABLE_NAME
@@ -234,7 +233,7 @@ namespace SQLiter
 				+ COL_NAME + ","
 				+ COL_PASSWORD
 				+ ") VALUES ("
-				+ player_id + ",'"  
+				+ player_count + ",'"  
 				+ name + "',"        
 				+ "'" + password + "'"
 				+ ");";
