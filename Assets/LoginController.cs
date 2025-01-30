@@ -15,6 +15,7 @@ namespace Player{
         public TMP_InputField passwordInput;
         public static int playerId;
         public GameObject AlertMessage;
+        public GameObject LoginPanel;
         public Button loginButton;
         public GameObject SidePanel;
         public AvatarReferences AvatarReferences;
@@ -35,8 +36,12 @@ namespace Player{
             if (playerId != -1)
             {
                 Dictionary<string, int> playerData = SQLiter.SQLite.Instance.GetPlayerCustomization(username, password);
-
+                Debug.Log($"{playerData}");
                 ClothingItem top = null;
+                ClothingItem hat = null;
+                ClothingItem bottom = null;
+                ClothingItem glasses = null;
+                ClothingItem shoes = null;
                 FieldInfo[] fields = typeof(AvatarCustomization).GetFields();
 
                 foreach (var entry in playerData)
@@ -46,38 +51,67 @@ namespace Player{
 
                     if (slotType == "hat")
                     {
-                        ClothingItem selectedClothingItem = AvatarReferences.AvailableClothingItems[index];
-                        Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Hat, 0);
-                        Avatar.AttachClothingItem(selectedClothingItem);
-                        Avatar.UpdateClothing();
+                        hat = AvatarReferences.AvailableClothingItems[index];
                     }
                     else if (slotType == "bottom")
                     {
-                        ClothingItem selectedClothingItem = Avatar.AvatarReferences.AvailableClothingItems[index];
-                        Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Bottom, 0);
-                        Avatar.AttachClothingItem(selectedClothingItem);
-                        Avatar.UpdateClothing();
+                        bottom = AvatarReferences.AvailableClothingItems[index];
                     }
                     else if (slotType == "glasses")
                     {
-                        ClothingItem selectedClothingItem = Avatar.AvatarReferences.AvailableClothingItems[index];
-                        Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Glasses, 0);
-                        Avatar.AttachClothingItem(selectedClothingItem);
-                        Avatar.UpdateClothing();
+                        glasses = AvatarReferences.AvailableClothingItems[index];
                     }
                     else if (slotType == "top")
                     {
-                        ClothingItem selectedClothingItem = Avatar.AvatarReferences.AvailableClothingItems[index];
-                        Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Top, 0);
-                        Avatar.AttachClothingItem(selectedClothingItem);
-                        Avatar.UpdateClothing();
+                        
+                        top = AvatarReferences.AvailableClothingItems[index];
+                    }
+                    else if (slotType == "shoes")
+                    {
+                        shoes = AvatarReferences.AvailableClothingItems[index];
                     }
                     else if (slotType == "top_material")
                     {
                         if (top != null)
                         {
                             Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Top, index);
-                            Avatar.AttachClothingItem(top);
+                            Avatar.AttachClothingItem(top, index);
+                            Avatar.UpdateClothing();
+                        }
+                    }
+                    else if (slotType == "hat_material")
+                    {
+                        if (hat != null)
+                        {
+                            Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Hat, index);
+                            Avatar.AttachClothingItem(hat, index);
+                            Avatar.UpdateClothing();
+                        }
+                    }
+                    else if (slotType == "bottom_material")
+                    {
+                        if (bottom != null)
+                        {
+                            Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Bottom, index);
+                            Avatar.AttachClothingItem(bottom, index);
+                            Avatar.UpdateClothing();
+                        }
+                    }
+                    else if (slotType == "glasses_material")
+                    {
+                        if (glasses != null)
+                        {
+                            Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Glasses, index);
+                            Avatar.AttachClothingItem(glasses, index);
+                            Avatar.UpdateClothing();
+                        }
+                    }
+                    else if (slotType == "shoes_material")
+                    {
+                        if (shoes != null)
+                        {
+                            Avatar.SetClothingItemVariation(Sunbox.Avatars.SlotType.Shoes, index);
+                            Avatar.AttachClothingItem(shoes, index);
                             Avatar.UpdateClothing();
                         }
                     }
@@ -96,6 +130,8 @@ namespace Player{
             {
                 AlertMessage.SetActive(true);
             }
+            SidePanel.SetActive(true);
+            LoginPanel.SetActive(false);
         }
     }
 }

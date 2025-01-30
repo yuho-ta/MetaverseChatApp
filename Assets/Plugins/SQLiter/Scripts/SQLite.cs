@@ -62,12 +62,18 @@ namespace SQLiter
 		private const string COL_NAME = "name"; 
 		private const string COL_PASSWORD = "password";
 		private const string COL_HAT = "hat";
+		private const string COL_HAT_MATERIAL = "hat_material";
 		private const string COL_TOP = "top";
 		private const string COL_TOP_MATERIAL = "top_material";
 		private const string COL_BOTTOM = "bottom";
+		private const string COL_BOTTOM_MATERIAL = "bottom_material";
 		private const string COL_GLASSES = "glasses";
-		private const string COL_SKIN = "skin";
+		private const string COL_GLASSES_MATERIAL = "glasses_material";
+		private const string COL_SHOES = "shoes";
+		private const string COL_SHOES_MATERIAL = "shoes_material";
+		private const string COL_SKIN_MATERIAL = "skin_material";
 		private const string COL_HAIR_MATERIAL = "hair_material";
+		private const string COL_HAIR_STYLE = "hair_style";
 		private const string COL_EYE_MATERIAL = "eye_material";
 		private const string COL_BROW_MATERIAL = "brow_material";
 		private const string COL_PLAYER_ID = "player_id"; 
@@ -167,14 +173,21 @@ namespace SQLiter
 				$"{COL_NAME} TEXT UNIQUE, " +
 				$"{COL_PASSWORD} TEXT, " +
 				$"{COL_HAT} INTEGER, " +
+				$"{COL_HAT_MATERIAL} INTEGER, " +
 				$"{COL_TOP} INTEGER, " +
 				$"{COL_TOP_MATERIAL} INTEGER, " +
 				$"{COL_BOTTOM} INTEGER, " +
+				$"{COL_BOTTOM_MATERIAL} INTEGER, " +
+				$"{COL_SHOES} INTEGER, " +
+				$"{COL_SHOES_MATERIAL} INTEGER, " +
 				$"{COL_GLASSES} INTEGER, " +
-				$"{COL_SKIN} INTEGER, " +
+				$"{COL_GLASSES_MATERIAL} INTEGER, " +
+				$"{COL_SKIN_MATERIAL} INTEGER, " +
 				$"{COL_HAIR_MATERIAL} INTEGER, " +
+				$"{COL_HAIR_STYLE} INTEGER, " +
 				$"{COL_EYE_MATERIAL} INTEGER, " +
 				$"{COL_BROW_MATERIAL} INTEGER)";
+			Debug.Log($"{_command.CommandText}");
 			_command.ExecuteNonQuery();
 
             // FRIENDS_TABLE
@@ -230,40 +243,36 @@ namespace SQLiter
 				Debug.Log(_sqlString);
 			ExecuteNonQuery(_sqlString);
 		}
-		public void InsertClothInfo(int playerId, Dictionary<string, int> clothData)
+		public void UpdateClothInfo(int playerId, Dictionary<string, int?> clothData)
 		{
-			string _sqlString = "INSERT OR REPLACE INTO " + SQL_TABLE_NAME + " (";
+			if (clothData == null || clothData.Count == 0)
+				return;
 
-			List<string> columns = new List<string>
+			string _sqlString = "UPDATE " + SQL_TABLE_NAME + " SET ";
+
+			List<string> setClauses = new List<string>();
+
+			foreach (var entry in clothData)
 			{
-				COL_HAT, COL_TOP, COL_TOP_MATERIAL, COL_BOTTOM, COL_GLASSES,
-				COL_SKIN, COL_HAIR_MATERIAL, COL_EYE_MATERIAL, COL_BROW_MATERIAL
-			};
-
-			_sqlString += string.Join(", ", columns);
-			_sqlString += ") VALUES (";
-
-			List<string> values = new List<string>();
-			foreach (string column in columns)
-			{
-				if (clothData.ContainsKey(column))
+				if (entry.Value.HasValue)
 				{
-					values.Add(clothData[column].ToString());
+					setClauses.Add($"{entry.Key} = {entry.Value.Value}"); 
 				}
 				else
 				{
-					values.Add("NULL"); 
+					setClauses.Add($"{entry.Key} = NULL"); 
 				}
 			}
 
-			_sqlString = _sqlString.Insert(_sqlString.IndexOf('(') + 1, playerId.ToString() + ", ");
-			_sqlString += string.Join(", ", values) + ");";
+			_sqlString += string.Join(", ", setClauses);
+			_sqlString += $" WHERE player_id = {playerId};";
 
 			if (DebugMode)
 				Debug.Log(_sqlString);
 
 			ExecuteNonQuery(_sqlString);
 		}
+
 		#endregion
 
 		#region Query Values
@@ -305,8 +314,8 @@ namespace SQLiter
 				_connection.Open();
 				Debug.Log("Connection opened successfully!");
 				// Use parameterized query to prevent SQL injection
-				_command.CommandText = $"SELECT {COL_PLAYER_ID} FROM {SQL_TABLE_NAME} WHERE {COL_NAME} = name AND {COL_PASSWORD} = password";
-
+				_command.CommandText = $"SELECT {COL_PLAYER_ID} FROM {SQL_TABLE_NAME} WHERE {COL_NAME} = '{name}' AND {COL_PASSWORD} = '{password}'";
+				Debug.Log($"{_command.CommandText}");
 				_reader = _command.ExecuteReader();
 				if (_reader.Read())
 				{
@@ -334,8 +343,9 @@ namespace SQLiter
 			{
 				_connection.Open();
 
-				_command.CommandText = $"SELECT {COL_HAT}, {COL_TOP}, {COL_TOP_MATERIAL}, {COL_BOTTOM}, {COL_GLASSES}, " +
-                       $"{COL_SKIN}, {COL_HAIR_MATERIAL}, {COL_EYE_MATERIAL}, {COL_BROW_MATERIAL} " +
+				_command.CommandText = $"SELECT {COL_HAT}, {COL_HAT_MATERIAL}, {COL_TOP}, {COL_TOP_MATERIAL}, " +
+					   $"{COL_BOTTOM}, {COL_BOTTOM_MATERIAL}, {COL_SHOES}, {COL_SHOES_MATERIAL}, {COL_GLASSES}, {COL_GLASSES_MATERIAL}, " +
+                       $"{COL_SKIN_MATERIAL}, {COL_HAIR_MATERIAL}, {COL_HAIR_STYLE}, {COL_EYE_MATERIAL}, {COL_BROW_MATERIAL} " +
                        $"FROM {SQL_TABLE_NAME} WHERE {COL_NAME} = name AND {COL_PASSWORD} = password";
 
 				
@@ -344,14 +354,20 @@ namespace SQLiter
 					if (reader.Read())
 					{
 						playerData[COL_HAT] = reader.GetInt32(0);
-						playerData[COL_TOP] = reader.GetInt32(1);
-						playerData[COL_TOP_MATERIAL] = reader.GetInt32(2);
-						playerData[COL_BOTTOM] = reader.GetInt32(3);
-						playerData[COL_GLASSES] = reader.GetInt32(4);
-						playerData[COL_SKIN] = reader.GetInt32(5);
-						playerData[COL_HAIR_MATERIAL] = reader.GetInt32(6);
-						playerData[COL_EYE_MATERIAL] = reader.GetInt32(7);
-						playerData[COL_BROW_MATERIAL] = reader.GetInt32(8);
+						playerData[COL_HAT_MATERIAL] = reader.GetInt32(1);
+						playerData[COL_TOP] = reader.GetInt32(2);
+						playerData[COL_TOP_MATERIAL] = reader.GetInt32(3);
+						playerData[COL_BOTTOM] = reader.GetInt32(4);
+						playerData[COL_BOTTOM_MATERIAL] = reader.GetInt32(5);
+						playerData[COL_GLASSES] = reader.GetInt32(6);
+						playerData[COL_GLASSES_MATERIAL] = reader.GetInt32(7);
+						playerData[COL_SHOES] = reader.GetInt32(8);
+						playerData[COL_SHOES_MATERIAL] = reader.GetInt32(9);
+						playerData[COL_SKIN_MATERIAL] = reader.GetInt32(10);
+						playerData[COL_HAIR_STYLE] = reader.GetInt32(11);
+						playerData[COL_HAIR_MATERIAL] = reader.GetInt32(12);
+						playerData[COL_EYE_MATERIAL] = reader.GetInt32(13);
+						playerData[COL_BROW_MATERIAL] = reader.GetInt32(14);
 					}
 				}
 
@@ -470,6 +486,7 @@ namespace SQLiter
 		/// <param name="commandText"></param>
 		public void ExecuteNonQuery(string commandText)
 		{
+			Debug.Log($"{commandText}");
 			_connection.Open();
 			_command.CommandText = commandText;
 			_command.ExecuteNonQuery();

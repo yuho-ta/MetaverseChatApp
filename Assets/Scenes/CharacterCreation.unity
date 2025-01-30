@@ -1478,6 +1478,7 @@ MonoBehaviour:
   usernameInput: {fileID: 708158809}
   passwordInput: {fileID: 1630237882}
   AlertMessage: {fileID: 1536210191}
+  LoginPanel: {fileID: 165149796}
   loginButton: {fileID: 374565198}
   SidePanel: {fileID: 295543849}
   AvatarReferences: {fileID: 11400000, guid: 64fdaf6301ddadf4984fbd23b73c1671, type: 2}
@@ -20488,7 +20489,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2009979075}
   m_HandleRect: {fileID: 18004579}
   m_Direction: 2
-  m_Value: 1.0000015
+  m_Value: 1
   m_Size: 0.93333334
   m_NumberOfSteps: 0
   m_OnValueChanged:

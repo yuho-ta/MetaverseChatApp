@@ -377,43 +377,83 @@ namespace Sunbox.Avatars {
         /// </summary>
         /// <param name="instance"></param>
         /// <returns></returns>
-        public static string ToConfigString(AvatarCustomization instance) {
-            const string CLOTHING_ITEM_KEY = "clothingItem";
-
-            StringBuilder sb = new StringBuilder();
+        public static Dictionary<string, int?> ToConfigString(AvatarCustomization instance) {
+            Dictionary<string, int?> clothData = new Dictionary<string, int?>();
             
             FieldInfo[] fields = typeof(AvatarCustomization).GetFields();
 
-            // Variables
             foreach (FieldInfo fieldInfo in fields) {
                 AvatarFieldAttribute fieldAttribute = fieldInfo.GetCustomAttribute<AvatarFieldAttribute>();
                 if (fieldAttribute != null) {
-                    sb.AppendLine($"{fieldAttribute.Prefix}{fieldAttribute.VariableName}={fieldAttribute.GetValueString(fieldInfo, instance)}");
+                    if (fieldAttribute.VariableName == "eyeMaterialIndex" || fieldAttribute.VariableName == "browMaterialIndex" || fieldAttribute.VariableName == "skinMaterialIndex" || fieldAttribute.VariableName == "hairMaterialIndex" || fieldAttribute.VariableName == "hairStyleIndex") {
+                        string transformedVariableName = fieldAttribute.VariableName switch
+                        {
+                            "eyeMaterialIndex" => "eye_material",
+                            "browMaterialIndex" => "brow_material",
+                            "skinMaterialIndex" => "skin_material",
+                            "hairMaterialIndex" => "hair_material",
+                            "hairStyleIndex" => "hair_style"
+                        };
+                        string valueStr = fieldAttribute.GetValue(fieldInfo, instance);
+                        if (int.TryParse(valueStr, out int intValue)){
+                            clothData[transformedVariableName] = intValue;
+                        }
+                    }
                 }
             }
 
             // Clothing items
             if (instance.ClothingItemHat != null) {
-                sb.AppendLine($"{CLOTHING_ITEM_KEY}={instance.ClothingItemHat.Name}-{instance.ClothingItemHatVariationIndex}");
+                var hatItem = instance.AvatarReferences.AvailableClothingItems
+                .FirstOrDefault(item => item.Name == instance.ClothingItemHat.Name);
+                int hatIndex = hatItem != null
+                ? instance.AvatarReferences.AvailableClothingItems.ToList().IndexOf(hatItem)
+                : -1;
+                clothData["hat"] = hatIndex;
+                clothData["hat_material"] = instance.ClothingItemHatVariationIndex;
             }
             
             if (instance.ClothingItemTop != null) {
-                sb.AppendLine($"{CLOTHING_ITEM_KEY}={instance.ClothingItemTop.Name}-{instance.ClothingItemTopVariationIndex}");
+                var topItem = instance.AvatarReferences.AvailableClothingItems
+                .FirstOrDefault(item => item.Name == instance.ClothingItemTop.Name);
+                int topIndex = topItem != null
+                ? instance.AvatarReferences.AvailableClothingItems.ToList().IndexOf(topItem)
+                : -1;
+                clothData["top"] = topIndex;
+                clothData["top_material"] = instance.ClothingItemTopVariationIndex;
             }
             
             if (instance.ClothingItemBottom != null) {
-                sb.AppendLine($"{CLOTHING_ITEM_KEY}={instance.ClothingItemBottom.Name}-{instance.ClothingItemBottomVariationIndex}");
+                var bottomItem = instance.AvatarReferences.AvailableClothingItems
+                .FirstOrDefault(item => item.Name == instance.ClothingItemBottom.Name);
+                int bottomIndex = bottomItem != null
+                ? instance.AvatarReferences.AvailableClothingItems.ToList().IndexOf(bottomItem)
+                : -1;
+                clothData["bottom"] = bottomIndex;
+                clothData["bottom_material"] = instance.ClothingItemBottomVariationIndex;
             }
 
             if (instance.ClothingItemGlasses != null) {
-                sb.AppendLine($"{CLOTHING_ITEM_KEY}={instance.ClothingItemGlasses.Name}-{instance.ClothingItemGlassesVariationIndex}");
+                var glassesItem = instance.AvatarReferences.AvailableClothingItems
+                .FirstOrDefault(item => item.Name == instance.ClothingItemGlasses.Name);
+                int glassesIndex = glassesItem != null
+                ? instance.AvatarReferences.AvailableClothingItems.ToList().IndexOf(glassesItem)
+                : -1;
+                clothData["glasses"] = glassesIndex;
+                clothData["glasses_material"] = instance.ClothingItemGlassesVariationIndex;
             }
             
             if (instance.ClothingItemShoes != null) {
-                sb.AppendLine($"{CLOTHING_ITEM_KEY}={instance.ClothingItemShoes.Name}-{instance.ClothingItemShoesVariationIndex}");
+                var shoesItem = instance.AvatarReferences.AvailableClothingItems
+                .FirstOrDefault(item => item.Name == instance.ClothingItemShoes.Name);
+                int shoesIndex = shoesItem != null
+                ? instance.AvatarReferences.AvailableClothingItems.ToList().IndexOf(shoesItem)
+                : -1;
+                clothData["shoes"] = shoesIndex;
+                clothData["shoes_material"] = instance.ClothingItemShoesVariationIndex;
             }
- 
-            return sb.ToString();
+            Debug.Log("clothData: " + string.Join(", ", clothData.Select(kv => $"{kv.Key}: {kv.Value}")));
+            return clothData;
         }
 
         private void SetBlendShapes_Internal(float amount, int min, int max, SkinnedMeshRenderer body) {
@@ -846,7 +886,7 @@ namespace Sunbox.Avatars {
             Prefix = prefix;
         }
 
-        public virtual string GetValueString(FieldInfo fieldInfo, object instance) {
+        public virtual string GetValue(FieldInfo fieldInfo, object instance) {
             return fieldInfo.GetValue(instance).ToString();
         }
     }
