@@ -1,17 +1,17 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI; 
+using UnityEngine.UI;
 using Cysharp.Threading.Tasks;
 using TMPro;
 
-namespace AAA.OpenAI
+namespace AAA.Gemini
 {
     public class BotChat : MonoBehaviour
     {
-        private ChatGPTConnection chatGPT;
-        private string apiKey = "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";
-        public Button BackButton; 
-        public Button SendButton; 
+        private GeminiConnection gemini;
+        private string apiKey = "AIzaSyB_0v8PkkzByBg9VHS7t9q9yPp8U2uqwsc";
+        public Button BackButton;
+        public Button SendButton;
         public GameObject ChatPanel;
         public GameObject SentMessageTemplate;
         public GameObject ReplyMessageTemplate;
@@ -20,36 +20,43 @@ namespace AAA.OpenAI
 
         private void Start()
         {
-            chatGPT = new ChatGPTConnection(apiKey);
+            gemini = new GeminiConnection(apiKey);
             SentMessageTemplate.SetActive(false);
             ReplyMessageTemplate.SetActive(false);
-            BackButton.onClick.AddListener(()=>ChatPanel.SetActive(false));
-            SendButton.onClick.AddListener(SendMessageToChatGPT);
+            BackButton.onClick.AddListener(() => ChatPanel.SetActive(false));
+            SendButton.onClick.AddListener(SendMessageToGemini);
         }
-        public async void SendMessageToChatGPT()
+
+        public async void SendMessageToGemini()
         {
             string userMessage = MessageInput.text;
+
             GameObject sentMessageInstance = Instantiate(SentMessageTemplate);
             sentMessageInstance.transform.SetParent(ContentTransform, false);
-            sentMessageInstance.GetComponentInChildren<TextMeshProUGUI>().text = userMessage;
+            sentMessageInstance.GetComponentInChildren<TextMeshProUGUI>().text = "Me: " + userMessage;
+            sentMessageInstance.SetActive(true);
+
             try
             {
-                var response = await chatGPT.RequestAsync(userMessage);
-                string botReply = response.choices[0].message.content;
-
+                var botReply = await gemini.RequestAsync(userMessage);
                 Debug.Log($"Bot({name}): {botReply}");
 
-                if (botReply != null)
+                if (!string.IsNullOrEmpty(botReply))
                 {
                     GameObject replyMessageInstance = Instantiate(ReplyMessageTemplate);
                     replyMessageInstance.transform.SetParent(ContentTransform, false);
-                    replyMessageInstance.GetComponentInChildren<TextMeshProUGUI>().text = botReply;
+                    replyMessageInstance.GetComponentInChildren<TextMeshProUGUI>().text = "Gemini: " + botReply;
+                    replyMessageInstance.SetActive(true);
                 }
+
+                Canvas.ForceUpdateCanvases();
+                ContentTransform.anchoredPosition = new Vector2(0, Mathf.Min(0, ContentTransform.sizeDelta.y));
             }
             catch (Exception e)
             {
-                Debug.LogError($"ChatGPTError: {e.Message}");
+                Debug.LogError($"Gemini API Error: {e.Message}");
             }
         }
+
     }
 }

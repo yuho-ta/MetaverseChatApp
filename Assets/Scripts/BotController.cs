@@ -1,5 +1,5 @@
 using UnityEngine;
-using AAA.OpenAI;
+using AAA.Gemini;
 using UnityEngine.UI; 
 
 public class BotController : MonoBehaviour
