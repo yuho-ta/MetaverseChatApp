@@ -9,6 +9,6 @@ public class BotButtonPosition : MonoBehaviour
     {
         Vector3 botPosition = bot.transform.position;
 
-        canvas.transform.position = botPosition + new Vector3(0, 1.2f, 0); 
+        canvas.transform.position = botPosition + new Vector3(0, 1.8f, 0); 
     }
 }

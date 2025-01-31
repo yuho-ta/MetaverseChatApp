@@ -16,7 +16,8 @@ namespace AAA.OpenAI
         {
             _apiKey = apiKey;
             _messageList.Add(
-                new ChatGPTMessageModel(){role = "system",content = "語尾に「にゃ」をつけて"});
+                new ChatGPTMessageModel() { role = "system", content = "You are an AI assistant. Respond in English and keep your reply within 50 words." }
+            );
         }
 
         public async UniTask<ChatGPTResponseModel> RequestAsync(string userMessage)
@@ -32,10 +33,15 @@ namespace AAA.OpenAI
                 {"X-Slack-No-Retry", "1"}
             };
 
-            var options = new ChatGPTCompletionRequestModel()
+            var options = new ChatGPTCompletionRequestModel
             {
                 model = "gpt-3.5-turbo",
-                messages = _messageList
+                messages = new List<ChatGPTMessageModel>
+                {
+                    new ChatGPTMessageModel { role = "system", content = "You are an AI assistant. Respond in English and keep your reply within 50 words." },
+                    new ChatGPTMessageModel { role = "user", content = "Tell me about space exploration." }
+                },
+                max_tokens = 70
             };
             var jsonOptions = JsonUtility.ToJson(options);
 
@@ -107,5 +113,6 @@ namespace AAA.OpenAI
     {
         public string model;
         public List<ChatGPTMessageModel> messages;
+        public int max_tokens;
     }
 }

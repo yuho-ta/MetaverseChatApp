@@ -9,7 +9,7 @@ namespace AAA.OpenAI
     public class BotChat : MonoBehaviour
     {
         private ChatGPTConnection chatGPT;
-        private string apiKey = "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";
+        private string apiKey = "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";
         public Button BackButton; 
         public Button SendButton; 
         public GameObject ChatPanel;
@@ -21,6 +21,8 @@ namespace AAA.OpenAI
         private void Start()
         {
             chatGPT = new ChatGPTConnection(apiKey);
+            SentMessageTemplate.SetActive(false);
+            ReplyMessageTemplate.SetActive(false);
             BackButton.onClick.AddListener(()=>ChatPanel.SetActive(false));
             SendButton.onClick.AddListener(SendMessageToChatGPT);
         }
@@ -29,7 +31,7 @@ namespace AAA.OpenAI
             string userMessage = MessageInput.text;
             GameObject sentMessageInstance = Instantiate(SentMessageTemplate);
             sentMessageInstance.transform.SetParent(ContentTransform, false);
-            sentMessageInstance.GetComponent<TextMeshProUGUI>().text = userMessage;
+            sentMessageInstance.GetComponentInChildren<TextMeshProUGUI>().text = userMessage;
             try
             {
                 var response = await chatGPT.RequestAsync(userMessage);
@@ -41,7 +43,7 @@ namespace AAA.OpenAI
                 {
                     GameObject replyMessageInstance = Instantiate(ReplyMessageTemplate);
                     replyMessageInstance.transform.SetParent(ContentTransform, false);
-                    replyMessageInstance.GetComponent<TextMeshProUGUI>().text = botReply;
+                    replyMessageInstance.GetComponentInChildren<TextMeshProUGUI>().text = botReply;
                 }
             }
             catch (Exception e)

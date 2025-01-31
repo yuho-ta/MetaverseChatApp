@@ -286,28 +286,65 @@ namespace Sunbox.Avatars {
             EditorGUILayout.LabelField("Clothing Item Variations", EditorStyles.whiteLargeLabel);
             GUILayout.Space(10);
 
-            if (_instance.ClothingItemHat != null) {
-                _instance.ClothingItemHatVariationIndex = EditorGUILayout.IntSlider($"{_instance.ClothingItemHat.Name} Variation", _instance.ClothingItemHatVariationIndex, 0, _instance.ClothingItemHat.Variations.Length - 1);
+            
+            if (_instance.ClothingItemHat != null && _instance.ClothingItemHat.Variations.Length > 0) {
+                _instance.ClothingItemHatVariationIndex = Mathf.Clamp(
+                    _instance.ClothingItemHatVariationIndex, 0, _instance.ClothingItemHat.Variations.Length - 1
+                );
+                _instance.ClothingItemHatVariationIndex = EditorGUILayout.IntSlider(
+                    $"{_instance.ClothingItemHat.Name} Variation", 
+                    _instance.ClothingItemHatVariationIndex, 
+                    0, 
+                    _instance.ClothingItemHat.Variations.Length - 1
+                );
                 EditorGUILayout.LabelField($"({_instance.ClothingItemHat.Variations[_instance.ClothingItemHatVariationIndex].name})", EditorStyles.whiteMiniLabel);
             }
-
-            if (_instance.ClothingItemTop != null) {
-                _instance.ClothingItemTopVariationIndex = EditorGUILayout.IntSlider($"{_instance.ClothingItemTop.Name} Variation", _instance.ClothingItemTopVariationIndex, 0, _instance.ClothingItemTop.Variations.Length - 1);
+            if (_instance.ClothingItemTop != null && _instance.ClothingItemTop.Variations.Length > 0) {
+                _instance.ClothingItemTopVariationIndex = Mathf.Clamp(
+                    _instance.ClothingItemTopVariationIndex, 0, _instance.ClothingItemTop.Variations.Length - 1
+                );
+                _instance.ClothingItemTopVariationIndex = EditorGUILayout.IntSlider(
+                    $"{_instance.ClothingItemTop.Name} Variation", 
+                    _instance.ClothingItemTopVariationIndex, 
+                    0, 
+                    _instance.ClothingItemTop.Variations.Length - 1
+                );
                 EditorGUILayout.LabelField($"({_instance.ClothingItemTop.Variations[_instance.ClothingItemTopVariationIndex].name})", EditorStyles.whiteMiniLabel);
             }
-
-            if (_instance.ClothingItemBottom != null) {
-                _instance.ClothingItemBottomVariationIndex = EditorGUILayout.IntSlider($"{_instance.ClothingItemBottom.Name} Variation", _instance.ClothingItemBottomVariationIndex, 0, _instance.ClothingItemBottom.Variations.Length - 1);
+            if (_instance.ClothingItemBottom != null && _instance.ClothingItemBottom.Variations.Length > 0) {
+                _instance.ClothingItemBottomVariationIndex = Mathf.Clamp(
+                    _instance.ClothingItemBottomVariationIndex, 0, _instance.ClothingItemBottom.Variations.Length - 1
+                );
+                _instance.ClothingItemBottomVariationIndex = EditorGUILayout.IntSlider(
+                    $"{_instance.ClothingItemBottom.Name} Variation", 
+                    _instance.ClothingItemBottomVariationIndex, 
+                    0, 
+                    _instance.ClothingItemBottom.Variations.Length - 1
+                );
                 EditorGUILayout.LabelField($"({_instance.ClothingItemBottom.Variations[_instance.ClothingItemBottomVariationIndex].name})", EditorStyles.whiteMiniLabel);
             }
-
-            if (_instance.ClothingItemGlasses != null) {
-                _instance.ClothingItemGlassesVariationIndex = EditorGUILayout.IntSlider($"{_instance.ClothingItemGlasses.Name} Variation", _instance.ClothingItemGlassesVariationIndex, 0, _instance.ClothingItemGlasses.Variations.Length - 1);
+            if (_instance.ClothingItemGlasses != null && _instance.ClothingItemGlasses.Variations.Length > 0) {
+                _instance.ClothingItemGlassesVariationIndex = Mathf.Clamp(
+                    _instance.ClothingItemGlassesVariationIndex, 0, _instance.ClothingItemGlasses.Variations.Length - 1
+                );
+                _instance.ClothingItemGlassesVariationIndex = EditorGUILayout.IntSlider(
+                    $"{_instance.ClothingItemGlasses.Name} Variation", 
+                    _instance.ClothingItemGlassesVariationIndex, 
+                    0, 
+                    _instance.ClothingItemGlasses.Variations.Length - 1
+                );
                 EditorGUILayout.LabelField($"({_instance.ClothingItemGlasses.Variations[_instance.ClothingItemGlassesVariationIndex].name})", EditorStyles.whiteMiniLabel);
             }
-
-            if (_instance.ClothingItemShoes != null) {
-                _instance.ClothingItemShoesVariationIndex = EditorGUILayout.IntSlider($"{_instance.ClothingItemShoes.Name} Variation", _instance.ClothingItemShoesVariationIndex, 0, _instance.ClothingItemShoes.Variations.Length - 1);
+            if (_instance.ClothingItemShoes != null && _instance.ClothingItemShoes.Variations.Length > 0) {
+                _instance.ClothingItemShoesVariationIndex = Mathf.Clamp(
+                    _instance.ClothingItemShoesVariationIndex, 0, _instance.ClothingItemShoes.Variations.Length - 1
+                );
+                _instance.ClothingItemShoesVariationIndex = EditorGUILayout.IntSlider(
+                    $"{_instance.ClothingItemShoes.Name} Variation", 
+                    _instance.ClothingItemShoesVariationIndex, 
+                    0, 
+                    _instance.ClothingItemShoes.Variations.Length - 1
+                );
                 EditorGUILayout.LabelField($"({_instance.ClothingItemShoes.Variations[_instance.ClothingItemShoesVariationIndex].name})", EditorStyles.whiteMiniLabel);
             }
 

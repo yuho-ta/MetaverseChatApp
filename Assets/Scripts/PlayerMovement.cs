@@ -40,20 +40,20 @@ public class PlayerMovements : MonoBehaviour
 
         if (Input.GetKey(KeyCode.UpArrow))
         {
-            targetSpeedY = -1f;
+            targetSpeedY = 1f;
         }
         else if (Input.GetKey(KeyCode.DownArrow))
         {
-            targetSpeedY = 1f;
+            targetSpeedY = -1f;
         }
 
         if (Input.GetKey(KeyCode.LeftArrow))
         {
-            targetSpeedX = 1f;
+            targetSpeedX = -1f;
         }
         else if (Input.GetKey(KeyCode.RightArrow))
         {
-            targetSpeedX = -1f;
+            targetSpeedX = 1f;
         }
 
         speedX = Mathf.MoveTowards(speedX, targetSpeedX * maxSpeed, (targetSpeedX == 0 ? deceleration : acceleration) * Time.deltaTime);
