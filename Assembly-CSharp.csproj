@@ -65,29 +65,33 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\HairItem.cs" />
+    <Compile Include="Assets\Scripts\StartController.cs" />
+    <Compile Include="Assets\Scripts\BotChat.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UClothingItem.cs" />
-    <Compile Include="Assets\PlayerController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UUIRotation.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarReferences.cs" />
+    <Compile Include="Assets\Scripts\InputHandler.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarCustomization.cs" />
-    <Compile Include="Assets\InputHandler.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\FacialHairItem.cs" />
-    <Compile Include="Assets\DeleteTable.cs" />
+    <Compile Include="Assets\Scripts\SidePanelController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarLocomotion.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\HairItemBase.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UHair.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\Extensions.cs" />
-    <Compile Include="Assets\SidePanelController.cs" />
-    <Compile Include="Assets\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\BotController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UFacialHair.cs" />
+    <Compile Include="Assets\Scripts\BotButtonPosition.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\Slot.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UUIAvatarEditor.cs" />
-    <Compile Include="Assets\StartController.cs" />
+    <Compile Include="Assets\Scripts\SignUpController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\EyeController.cs" />
+    <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\Constants.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\ClothingItem.cs" />
-    <Compile Include="Assets\LoginController.cs" />
-    <Compile Include="Assets\SignUpController.cs" />
+    <Compile Include="Assets\Scripts\ChatGPTConnection.cs" />
+    <Compile Include="Assets\SunboxGames\Avatars\Scripts\AnimatorController.cs" />
+    <Compile Include="Assets\Scripts\PlayerMovement.cs" />
+    <Compile Include="Assets\Scripts\LoginController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
@@ -998,6 +1002,10 @@
       <HintPath>Library\ScriptAssemblies\Unity.TestTools.CodeCoverage.Editor.OpenCover.Model.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UniTask.TextMeshPro">
+      <HintPath>Library\ScriptAssemblies\UniTask.TextMeshPro.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.PlasticSCM.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.PlasticSCM.Editor.dll</HintPath>
       <Private>False</Private>
@@ -1012,6 +1020,14 @@
     </Reference>
     <Reference Include="Unity.VisualScripting.Shared.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.Shared.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask.Addressables">
+      <HintPath>Library\ScriptAssemblies\UniTask.Addressables.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask.DOTween">
+      <HintPath>Library\ScriptAssemblies\UniTask.DOTween.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualStudio.Editor">
@@ -1042,12 +1058,20 @@
       <HintPath>Library\ScriptAssemblies\Unity.Rider.Editor.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UniTask">
+      <HintPath>Library\ScriptAssemblies\UniTask.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="Unity.VisualScripting.State">
       <HintPath>Library\ScriptAssemblies\Unity.VisualScripting.State.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VSCode.Editor">
       <HintPath>Library\ScriptAssemblies\Unity.VSCode.Editor.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UniTask.Linq">
+      <HintPath>Library\ScriptAssemblies\UniTask.Linq.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Flow">

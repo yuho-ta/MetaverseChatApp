@@ -8,12 +8,12 @@ namespace Sunbox.Avatars {
         public float MovementAcceleration = 1f;
         public float MovementDamping = 1f;
 
-        private AvatarCustomization _avatar;
+        private AnimatorController _avatar;
 
         public Vector2 _inputVector;
 
         void Start()  {
-            _avatar = GetComponent<AvatarCustomization>();
+            _avatar = GetComponent<AnimatorController>();
         }
 
         void Update()  {

@@ -95,22 +95,6 @@ namespace Sunbox.Avatars {
             }
         }
 
-        public Animator Animator {
-            get {
-                return CurrentBase.GetComponent<Animator>();
-            }
-        }
-
-        public RuntimeAnimatorController AnimatorController {
-            get {
-                return Animator.runtimeAnimatorController;
-            }
-            set {
-                MaleBase.GetComponent<Animator>().runtimeAnimatorController = value;
-                FemaleBase.GetComponent<Animator>().runtimeAnimatorController = value;
-            }
-        }
-
         public TextAsset Preset;
         
         public GameObject MaleBase;
@@ -230,7 +214,115 @@ namespace Sunbox.Avatars {
             UpdateBlinking_Internal();
         }
 
-       
+       /// <summary>
+        /// Randomizes avatar (body and hair) parameters.
+        /// </summary>
+        /// <param name="seed">Seed used with randomizer. Use -1 if you don't want to use the seed.</param>
+        /// <param name="ignoreHeight">Ignores the height randomization and defaults to 1.8m.</param>
+        /// <param name="unifiedHairColors">Unifies all hair colors (brows, hair, facial hair).</param>
+        /// <param name="noRandomExpressions">Ignores expression randomization.</param>
+        public void RandomizeBodyParameters(int seed = -1, bool ignoreHeight = true, bool unifiedHairColors = true) {
+            if (seed != -1) {
+                UnityEngine.Random.InitState(seed);
+            }
+            
+            FieldInfo[] fields = typeof(AvatarCustomization).GetFields();
+
+            // Set float values
+            foreach (FieldInfo field in fields) {
+                AvatarFieldAttribute avatarFieldAttribute = field.GetCustomAttribute<AvatarFieldAttribute>();
+
+                if (avatarFieldAttribute == null) {
+                    continue;
+                }
+
+                if (avatarFieldAttribute is AvatarFloatFieldAttribute) {
+                    AvatarFloatFieldAttribute floatFieldAttribute = (AvatarFloatFieldAttribute) avatarFieldAttribute;
+                    field.SetValue(this, UnityEngine.Random.Range(floatFieldAttribute.SourceMinValue, floatFieldAttribute.SourceMaxValue));
+                }
+            }
+
+            // Eyes closed default should be > 0.5
+            EyesClosedDefault = 20;
+
+            // Height
+            if (ignoreHeight) {
+                BodyHeight = 1.8f;
+            }
+
+            // Set gender
+            AvatarGender gender = UnityEngine.Random.value < 0.5f ? AvatarGender.Male : AvatarGender.Female;
+            MaleBase.SetActive(CurrentGender == AvatarGender.Male);
+            FemaleBase.SetActive(CurrentGender == AvatarGender.Female);
+
+            // Set skin
+            if (CurrentGender == AvatarGender.Male) {
+                SkinMaterialIndex = UnityEngine.Random.Range(0, AvatarReferences.MaleSkinMaterials.Length);
+            }
+            if (CurrentGender == AvatarGender.Female) {
+                SkinMaterialIndex = UnityEngine.Random.Range(0, AvatarReferences.FemaleSkinMaterials.Length);
+            }
+
+            // Set hair
+            HairStyleIndex = UnityEngine.Random.Range(0, AvatarReferences.HairItems.Length);
+            HairMaterialIndex = UnityEngine.Random.Range(0, AvatarReferences.HairItems[HairStyleIndex].Variations.Length);
+
+            // Set facial hair
+            if (CurrentGender == AvatarGender.Male) {
+                FacialHairStyleIndex = UnityEngine.Random.Range(0, AvatarReferences.FacialHairItems.Length);
+                FacialHairMaterialIndex = UnityEngine.Random.Range(0, AvatarReferences.FacialHairItems[FacialHairStyleIndex].Variations.Length);
+            }
+
+            if (unifiedHairColors) {
+                FacialHairMaterialIndex = HairMaterialIndex;
+                BrowMaterialIndex = HairMaterialIndex;
+            }
+
+            // Set eyes
+            EyeMaterialIndex = UnityEngine.Random.Range(0, AvatarReferences.EyeMaterials.Length);
+
+            // Set eyebrow
+            if (!unifiedHairColors) {
+                BrowMaterialIndex = UnityEngine.Random.Range(0, AvatarReferences.BrowMaterials.Length);
+            }
+
+            UpdateCustomization();
+        }
+
+        /// <summary>
+        /// Randomizes all clothing items and their colors/materials.
+        /// </summary>
+        /// <param name="seed">Randomization seed to apply. Using -1 will randomize it every time you call this method.</param>
+        /// <param name="nudity">Enabled nudity can produce empty top or bottom clothing item.</param>
+        public void RandomizeClothing(int seed = -1, bool nudity = false) {
+            if (seed != -1) {
+                UnityEngine.Random.InitState(seed);
+            }
+
+            // Set clothing items
+            ClothingItemHat = AvatarReferences.AvailableClothingItems.RandomFirst(item => item.SlotType == SlotType.Hat);
+
+            if (nudity) {
+                ClothingItemTop = AvatarReferences.AvailableClothingItems.RandomFirst(item => item.SlotType == SlotType.Top);
+                ClothingItemBottom = AvatarReferences.AvailableClothingItems.RandomFirst(item => item.SlotType == SlotType.Bottom);
+            }
+            else {
+                ClothingItemTop = AvatarReferences.AvailableClothingItems.RandomFirst(item => item.SlotType == SlotType.Top && !item.IsEmpty);
+                ClothingItemBottom = AvatarReferences.AvailableClothingItems.RandomFirst(item => item.SlotType == SlotType.Bottom && !item.IsEmpty);
+            }
+
+            ClothingItemGlasses = AvatarReferences.AvailableClothingItems.RandomFirst(item => item.SlotType == SlotType.Glasses);
+            ClothingItemShoes = AvatarReferences.AvailableClothingItems.RandomFirst(item => item.SlotType == SlotType.Shoes);
+
+            ClothingItemHatVariationIndex = ClothingItemHat == null || ClothingItemHat.Variations.Length == 1 ? 0 : UnityEngine.Random.Range(0, ClothingItemHat.Variations.Length);
+            ClothingItemTopVariationIndex = ClothingItemTop == null || ClothingItemTop.Variations.Length == 1 ? 0 : UnityEngine.Random.Range(0, ClothingItemTop.Variations.Length);
+            ClothingItemBottomVariationIndex = ClothingItemBottom == null || ClothingItemBottom.Variations.Length == 1 ? 0 : UnityEngine.Random.Range(0, ClothingItemBottom.Variations.Length);
+            ClothingItemGlassesVariationIndex = ClothingItemGlasses == null || ClothingItemGlasses.Variations.Length == 1 ? 0 : UnityEngine.Random.Range(0, ClothingItemGlasses.Variations.Length);
+            ClothingItemShoesVariationIndex = ClothingItemShoes == null || ClothingItemShoes.Variations.Length == 1 ? 0 : UnityEngine.Random.Range(0, ClothingItemShoes.Variations.Length);
+
+            UpdateClothing();
+        }
+        
         /// <summary>
         /// Attaches clothing item to appopriate slot.
         /// </summary>

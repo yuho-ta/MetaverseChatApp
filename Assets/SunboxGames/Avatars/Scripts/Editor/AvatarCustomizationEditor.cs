@@ -135,11 +135,7 @@ namespace Sunbox.Avatars {
                 _instance.SetGender(newGender, true);
                 _instance.UpdateCustomization();
                 _instance.UpdateClothing();     
-            }
-
-            // Animator controllers
-            _instance.AnimatorController = (RuntimeAnimatorController) EditorGUILayout.ObjectField("Animator Controller", _instance.AnimatorController, typeof(RuntimeAnimatorController), allowSceneObjects: true);
-            
+            } 
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(_instance.AvatarReferences)));
             EditorGUILayout.PropertyField(_maleBaseGameObjectProperty);
             EditorGUILayout.PropertyField(_femaleBaseGameObjectProperty);
