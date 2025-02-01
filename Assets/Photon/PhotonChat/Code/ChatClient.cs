@@ -679,7 +679,6 @@ namespace Photon.Chat
             {
                 parameters.Add(ChatParameterCode.WebFlags, (byte)0x1);
             }
-            this.listener.DebugReturn(DebugLevel.WARNING, "Message sent successfully!");
 
             return this.chatPeer.SendOperation(ChatOperationCode.SendPrivate, parameters, new SendOptions() { Reliability = reliable, Encrypt = encrypt });
         }

@@ -39,6 +39,19 @@ namespace Photon.Chat.Demo
     /// </remarks>
     public class ChatGui : MonoBehaviour, IChatClientListener
     {
+        public static ChatGui Instance { get; private set; }
+
+        void Awake()
+        {
+            if (Instance != null && Instance != this)
+            {
+                Destroy(gameObject); 
+                return;
+            }
+            
+            Instance = this;
+            DontDestroyOnLoad(gameObject);  
+        }
 
         public string[] ChannelsToJoinOnConnect; // set in inspector. Demo channels to join automatically.
 

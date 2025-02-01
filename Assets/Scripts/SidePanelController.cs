@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Chat.Demo;
+using TMPro;
 
 public class SidePanelController : MonoBehaviour
 {
@@ -14,14 +16,23 @@ public class SidePanelController : MonoBehaviour
     public GameObject Canvas;
     public GameObject SidePanel;
     public GameObject Side;
-    public GameObject friendsListItem;
+    public GameObject FriendsListItem;
+    public GameObject SentMessageTemplate;
+    public GameObject ReplyMessageTemplate;
     public Button MessagePanelBackButton;
     public Button FriendPanelBackButton;
+    public Button ChatSendButton;
+    public RectTransform ContentTransform;
+    public TMP_InputField ChatSendInput;
+    
     void Start()
     {
+        MessagePanel.SetActive(false);
+        SentMessageTemplate.SetActive(false);
+        ReplyMessageTemplate.SetActive(false);
         DancePanel.SetActive(false);
         FriendPanel.SetActive(false);
-        friendsListItem.SetActive(false);
+        FriendsListItem.SetActive(false);
         DanceButton.onClick.AddListener(() => {
             DancePanel.SetActive(!DancePanel.activeSelf);
         });
@@ -41,6 +52,21 @@ public class SidePanelController : MonoBehaviour
             FriendPanel.SetActive(false);
             Side.SetActive(true);
         });
+        ChatSendButton.onClick.AddListener(() => {
+            sendMessage();
+        });
+    }
+    void sendMessage()
+        {
+            ChatGui chatGuiInstance = ChatGui.Instance;
+            string target = MessagePanel.GetComponentInChildren<TextMeshProUGUI>().text;
+            string inputLine = "\\msg " + target + " " + ChatSendInput.text;
+            chatGuiInstance.SendChatMessage(inputLine);
+            Debug.Log("Done");
+            GameObject sentMessage = (GameObject)Instantiate(SentMessageTemplate);
+            sentMessage.GetComponentInChildren<TextMeshProUGUI>().text = ChatSendInput.text;
+            sentMessage.transform.SetParent(ContentTransform, false);
+            sentMessage.gameObject.SetActive(true);
     }
 
 }
