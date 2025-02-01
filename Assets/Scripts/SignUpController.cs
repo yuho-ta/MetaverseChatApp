@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using SQLiter;
 using TMPro;
+using Photon.Chat.Demo;
 
 namespace Player{
     public class SignUpController : MonoBehaviour
@@ -42,6 +43,17 @@ namespace Player{
                 }
                 else
                 {
+                    ChatGui chatGui = FindObjectOfType<ChatGui>(); 
+                    if (chatGui != null)
+                    {
+                        chatGui.UserName = username.Trim();
+                        chatGui.Connect();
+                    }
+                    else
+                    {
+                        Debug.LogError("ChatGui instance not found!");
+                    }
+
                     Panel.SetActive(true);
                     SQLiter.SQLite.Instance.InsertPlayer(username, password);
                     playerController.playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);

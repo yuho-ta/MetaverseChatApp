@@ -7,6 +7,7 @@ using TMPro;
 using System.Reflection;
 using System.Linq;
 using Sunbox.Avatars;
+using Photon.Chat.Demo;
 
 namespace Player{
     public class LoginController : MonoBehaviour
@@ -39,6 +40,16 @@ namespace Player{
             playerController.username = username;
             playerController.password = password;
             playerController.playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);
+            ChatGui chatGui = FindObjectOfType<ChatGui>(); 
+            if (chatGui != null)
+            {
+                chatGui.UserName = username.Trim();
+                chatGui.Connect();
+            }
+            else
+            {
+                Debug.LogError("ChatGui instance not found!");
+            }
 
             if (playerController.playerId != -1)
             {
