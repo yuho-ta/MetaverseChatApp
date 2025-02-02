@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using SQLiter;
 using TMPro;
+using Sunbox.Avatars;
 using Photon.Chat.Demo;
+using Photon.Pun;
 
 namespace Player{
     public class SignUpController : MonoBehaviour
@@ -14,6 +16,14 @@ namespace Player{
         public GameObject AlertMessage;
         public GameObject Panel;
         public Button signupButton;
+        public GameObject avatarPrefab; 
+        private GameObject playerAvatar;
+        public Canvas canvas;
+        public Canvas chatstartcanvas;
+        public Button DanceButton;
+        public Button ClapButton;
+        public Button WaveButton;
+        private AvatarCustomization avatarCustomization;
 
         void Start()
         {
@@ -46,6 +56,28 @@ namespace Player{
                         chatGui.UserName = username.Trim();
                         chatGui.Connect();
                         chatGui.selectedChannelName = "General";
+                        chatGui.SendChatMessage("\\subscribe GeneralChat");
+                        if (PhotonNetwork.IsConnected)
+                        {
+                            Vector3 spawnPosition = new Vector3(5,0.1f,11);
+                            Quaternion spawnRotation = Quaternion.Euler(0, 180, 0);
+                            playerAvatar = PhotonNetwork.Instantiate(avatarPrefab.name, spawnPosition, spawnRotation);
+                            PlayerMovement[] playerMovements = playerAvatar.GetComponentsInChildren<PlayerMovement>();
+                            Camera camera = playerAvatar.GetComponentInChildren<Camera>();
+                            camera.transform.position = new Vector3(5,0,8);
+                            camera.transform.rotation = Quaternion.Euler(0, 0, 0);
+                            chatstartcanvas.worldCamera = camera;
+                            foreach (PlayerMovement playerMovement in playerMovements)
+                            {
+                                playerMovement.DanceButton = DanceButton;
+                                playerMovement.ClapButton = ClapButton;
+                                playerMovement.WaveButton = WaveButton;
+                                playerMovement.cameraTransform = camera.transform;
+                                playerMovement.canvas = canvas;
+                            }
+                        }
+                        AvatarManager.Instance.SetAvatarForUser(PhotonNetwork.LocalPlayer.UserId,playerAvatar);
+                        BotManager.Instance.setCamera();
                     }
                     else
                     {

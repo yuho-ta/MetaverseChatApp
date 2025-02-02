@@ -75,6 +75,7 @@
     <Compile Include="Assets\Scripts\InputHandler.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\AvatarCustomization.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\FacialHairItem.cs" />
+    <Compile Include="Assets\Scripts\BotManager.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\OnStartDelete.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatGui.cs" />
     <Compile Include="Assets\Scripts\SidePanelController.cs" />
@@ -85,6 +86,8 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\Extensions.cs" />
     <Compile Include="Assets\Scripts\BotController.cs" />
+    <Compile Include="Assets\Scripts\AvatarManager.cs" />
+    <Compile Include="Assets\Scripts\RoomManager.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UFacialHair.cs" />
     <Compile Include="Assets\Scripts\BotButtonPosition.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\Common\TextToggleIsOnTransition.cs" />

@@ -1,9 +1,10 @@
-
+using Photon.Pun;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Photon.Chat.Demo;
 
 namespace Sunbox.Avatars {
-    public class UUIRotation : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+    public class UUIRotation :  MonoBehaviourPunCallbacks, IBeginDragHandler, IDragHandler, IEndDragHandler {
         
         public GameObject Avatar;
 
@@ -15,8 +16,28 @@ namespace Sunbox.Avatars {
     
         private float _rotationVelocity;
         private bool _dragged;
+        private PhotonView photonView;
 
         private Vector3 _rotationVector = Vector3.up;
+        void Awake()
+        {
+            photonView = GetComponent<PhotonView>();
+            Debug.Log($"photonView is null: {photonView == null}");
+        }
+
+        void Start(){
+            photonView = GetComponent<PhotonView>();
+            Debug.Log($"photonView is null: {photonView == null}");
+            if (photonView.IsMine)
+                Debug.Log("AvatarRotation photonView.IsMine");
+                GameObject userAvatar = AvatarManager.Instance.GetAvatarForUser(PhotonNetwork.LocalPlayer.UserId);
+                Debug.Log(userAvatar != null);
+                if (userAvatar != null && Avatar == null) {
+                    Avatar = userAvatar;
+                }
+        }
+        
+        
     
         public void OnBeginDrag(PointerEventData eventData) {
             if (EventSystem.current.IsPointerOverGameObject(eventData.pointerId)) return;
@@ -33,17 +54,19 @@ namespace Sunbox.Avatars {
         }
     
         private void Update() {
-            if (!_dragged && !Mathf.Approximately(_rotationVelocity, 0)) {
-                float deltaVelocity = Mathf.Min(
-                    Mathf.Sign(_rotationVelocity) * Time.deltaTime * RotationDamping,
-                    Mathf.Sign(_rotationVelocity) * _rotationVelocity
-                );
-                _rotationVelocity -= deltaVelocity;
-                Avatar.transform.Rotate(_rotationVector, -_rotationVelocity, Space.World);
-            }
+            if (Avatar != null) {
+                    if (!_dragged && !Mathf.Approximately(_rotationVelocity, 0)) {
+                    float deltaVelocity = Mathf.Min(
+                        Mathf.Sign(_rotationVelocity) * Time.deltaTime * RotationDamping,
+                        Mathf.Sign(_rotationVelocity) * _rotationVelocity
+                    );
+                    _rotationVelocity -= deltaVelocity;
+                    Avatar.transform.Rotate(_rotationVector, -_rotationVelocity, Space.World);
+                }
 
-            if (!_dragged && AutoRotate) {
-                Avatar.transform.Rotate(_rotationVector, AutoRotateSpeed * Time.deltaTime, Space.World);
+                if (!_dragged && AutoRotate) {
+                    Avatar.transform.Rotate(_rotationVector, AutoRotateSpeed * Time.deltaTime, Space.World);
+                }
             }
         }
 

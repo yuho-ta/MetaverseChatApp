@@ -48,6 +48,7 @@ public class StartController : MonoBehaviour
             {
                 Debug.LogWarning($"bot({i}) に AvatarCustomization が見つかりませんでした！");
             }
+            BotManager.Instance.SetBot(bot,i);
         }
         ToLoginButton.onClick.AddListener(() =>
         {

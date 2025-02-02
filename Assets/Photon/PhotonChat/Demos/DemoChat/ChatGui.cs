@@ -495,6 +495,7 @@ namespace Photon.Chat.Demo
             // as the ChatClient is buffering the messages for you, this GUI doesn't need to do anything here
             // you also get messages that you sent yourself. in that case, the channelName is determinded by the target of your msg
             this.InstantiateChannelButton(channelName);
+            
 
             byte[] msgBytes = message as byte[];
             if (msgBytes != null)
@@ -504,6 +505,9 @@ namespace Photon.Chat.Demo
             if (this.selectedChannelName.Equals(channelName))
             {
                 this.ShowChannel(channelName);
+            }
+            if (sender == SidePanelController.Instance.target){
+                SidePanelController.Instance.ReceiveMessage(message.ToString());
             }
         }
 

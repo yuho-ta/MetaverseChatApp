@@ -1247,7 +1247,6 @@ namespace Photon.Chat
             object message = (object)eventData.Parameters[(byte)ChatParameterCode.Message];
             string sender = (string)eventData.Parameters[(byte)ChatParameterCode.Sender];
             int msgId = (int)eventData.Parameters[ChatParameterCode.MsgId];
-
             string channelName;
             if (this.UserId != null && this.UserId.Equals(sender))
             {
@@ -1278,7 +1277,6 @@ namespace Photon.Chat
             string[] senders = (string[])eventData.Parameters[(byte)ChatParameterCode.Senders];
             string channelName = (string)eventData.Parameters[(byte)ChatParameterCode.Channel];
             int lastMsgId = (int)eventData.Parameters[ChatParameterCode.MsgId];
-
             ChatChannel channel;
             if (!this.PublicChannels.TryGetValue(channelName, out channel))
             {

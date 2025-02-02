@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Reflection.Emit;
 using System.Reflection;
 using UnityEngine;
@@ -13,7 +14,7 @@ using Photon.Chat.Demo;
 
 namespace Sunbox.Avatars {
 
-    public class UUIAvatarEditor : MonoBehaviour {
+    public class UUIAvatarEditor : MonoBehaviourPunCallbacks {
 
         const string CONTENT_STRING = " (Content)";
         const string CONTENT_STRING_HIDE = " (Content Hide)";
@@ -47,8 +48,6 @@ namespace Sunbox.Avatars {
 
         private Vector3 _cameraPosition;
         private Vector3 _cameraRotation;
-        private Vector3 _enlargedCameraPosition = new Vector3(5,0.1f,8);
-        private Vector3 _enlargedCameraRotation = new Vector3(12,1,0);
 
         private ClothingDropdownWrapper _hatClothingDropdown;
         private ClothingDropdownWrapper _topClothingDropdown;
@@ -59,15 +58,29 @@ namespace Sunbox.Avatars {
         private UClothingItem _hiddenGlasses;
         
         private List<SliderWrapper> _sliders = new List<SliderWrapper>();
+        public PhotonView photonView;
 
-
+        void Awake()
+        {
+            photonView = GetComponent<PhotonView>();
+        }
 
         void Start() {
+            photonView = GetComponent<PhotonView>();
             _cameraPosition = Camera.transform.position;
             _cameraRotation = Camera.transform.eulerAngles;
             SidePanel.SetActive(false);
             SignUpPanel.SetActive(false);
             LoginPanel.SetActive(false);
+            if (photonView.IsMine)
+            {
+                Debug.Log("AvatarEditor photonView.IsMine");
+                AvatarCustomization userAvatar = AvatarManager.Instance.GetAvatarForUser(PhotonNetwork.LocalPlayer.UserId).GetComponent<AvatarCustomization>();
+                if (userAvatar != null)
+                {
+                    Avatar = userAvatar;
+                }
+            }
 
             MaleButton.onClick.AddListener(() => Avatar.SetGender(AvatarCustomization.AvatarGender.Male, true));
             FemaleButton.onClick.AddListener(() => Avatar.SetGender(AvatarCustomization.AvatarGender.Female, true));
@@ -95,8 +108,6 @@ namespace Sunbox.Avatars {
             FinishButton.onClick.AddListener(() => {
                 Canvas.SetActive(false);
                 SidePanel.SetActive(true);
-                Camera.transform.position = _enlargedCameraPosition;
-                Camera.transform.rotation = Quaternion.Euler(_enlargedCameraRotation);
                 ChatGui chatGuiInstance = ChatGui.Instance;
                 int playerId = SQLiter.SQLite.Instance.GetPlayerId(chatGuiInstance.UserName);
                 SQLiter.SQLite.Instance.UpdateClothInfo(playerId, AvatarCustomization.ToConfigString(AvatarCustomization.Instance));

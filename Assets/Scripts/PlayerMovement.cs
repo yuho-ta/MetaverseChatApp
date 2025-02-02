@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerMovements : MonoBehaviour
+public class PlayerMovement : MonoBehaviour
 {
     public Animator animator; 
     public float acceleration = 1.0f; 
@@ -12,7 +12,7 @@ public class PlayerMovements : MonoBehaviour
     public float moveSpeed = 2f; 
 
     public Transform cameraTransform; 
-    public Vector3 cameraOffset = new Vector3(0, -0.5f, 1);
+    private Vector3 cameraOffset = new Vector3(0,1,-4);
 
     public Canvas canvas; 
 
@@ -28,11 +28,12 @@ public class PlayerMovements : MonoBehaviour
     }
     void Update()
     {
-        if (canvas != null && canvas.gameObject.activeSelf)
+        if (canvas != null && !canvas.gameObject.activeSelf) 
         {
-            animator.SetFloat("MoveX", 0f);
-            animator.SetFloat("MoveY", 0f);
-            return;
+            if (cameraTransform != null)
+            {
+                cameraTransform.position = transform.position + cameraOffset; 
+            }
         }
 
         float targetSpeedX = 0f;
@@ -57,7 +58,6 @@ public class PlayerMovements : MonoBehaviour
         }
 
         speedX = Mathf.MoveTowards(speedX, targetSpeedX * maxSpeed, (targetSpeedX == 0 ? deceleration : acceleration) * Time.deltaTime);
-
         speedY = Mathf.MoveTowards(speedY, targetSpeedY * maxSpeed, (targetSpeedY == 0 ? deceleration : acceleration) * Time.deltaTime);
 
         animator.SetFloat("MoveX", speedX);
@@ -65,11 +65,6 @@ public class PlayerMovements : MonoBehaviour
 
         Vector3 movement = new Vector3(speedX, 0, speedY) * moveSpeed * Time.deltaTime;
         transform.Translate(movement, Space.World);
-
-        if (cameraTransform != null)
-        {
-            cameraTransform.position = transform.position + cameraOffset;
-        }
     }
     public void PlayDance()
     {

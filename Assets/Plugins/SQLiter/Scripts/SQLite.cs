@@ -80,7 +80,7 @@ namespace SQLiter
         private const string COL_FRIEND_ID = "friend_id";
         private const string COL_MESSAGE_ID = "message_id";
         private const string COL_MESSAGE_TEXT = "message_text";
-        private const string COL_SENDER_ID = "sender_id";
+        private const string COL_TARGET_ID = "target_id";
         private const string COL_TIMESTAMP = "timestamp";
 
 		/// <summary>
@@ -202,11 +202,11 @@ namespace SQLiter
             _command.CommandText = $"CREATE TABLE IF NOT EXISTS {MESSAGES_TABLE_NAME} (" +
                 $"{COL_MESSAGE_ID} INTEGER PRIMARY KEY AUTOINCREMENT, " +
                 $"{COL_PLAYER_ID} INTEGER, " +
-                $"{COL_SENDER_ID} INTEGER, " +
+                $"{COL_TARGET_ID} INTEGER, " +
                 $"{COL_MESSAGE_TEXT} TEXT, " +
                 $"{COL_TIMESTAMP} TEXT, " +
                 $"FOREIGN KEY({COL_PLAYER_ID}) REFERENCES {SQL_TABLE_NAME}({COL_PLAYER_ID}), " +
-                $"FOREIGN KEY({COL_SENDER_ID}) REFERENCES {SQL_TABLE_NAME}({COL_PLAYER_ID}))";
+                $"FOREIGN KEY({COL_TARGET_ID}) REFERENCES {SQL_TABLE_NAME}({COL_PLAYER_ID}))";
             _command.ExecuteNonQuery();
 
 
@@ -277,12 +277,12 @@ namespace SQLiter
 				Debug.Log(_sqlString);
 			ExecuteNonQuery(_sqlString);
 		}
-		public void InsertMessage(int playerId, int senderId, string message, string timestamp)
+		public void InsertMessage(int playerId, int targetId, string message, string timestamp)
 		{
 			_sqlString = "INSERT INTO " + MESSAGES_TABLE_NAME
-				+ " (" + COL_PLAYER_ID + ", " + COL_SENDER_ID + ", " 
+				+ " (" + COL_PLAYER_ID + ", " + COL_TARGET_ID + ", " 
 				+ COL_MESSAGE_TEXT + ", " + COL_TIMESTAMP + ") VALUES ("
-				+ playerId + ", " + senderId + ", '" 
+				+ playerId + ", " + targetId + ", '" 
 				+ message.Replace("'", "''") + "', '" 
 				+ timestamp + "');";
 
@@ -349,25 +349,25 @@ namespace SQLiter
 		}
 
 
-		public List<(int senderId, string message, string timestamp)> GetAllMessages(int player1Id, int player2Id)
+		public List<(int targetId, string message, string timestamp)> GetAllMessages(int player1Id, int player2Id)
 		{
 			_connection.Open();
-			List<(int senderId, string message, string timestamp)> messages = new List<(int, string, string)>();
+			List<(int targetId, string message, string timestamp)> messages = new List<(int, string, string)>();
 
-			_command.CommandText = "SELECT " + COL_SENDER_ID + ", " + COL_MESSAGE_TEXT + ", " + COL_TIMESTAMP +
+			_command.CommandText = "SELECT " + COL_TARGET_ID + ", " + COL_MESSAGE_TEXT + ", " + COL_TIMESTAMP +
 						" FROM " + MESSAGES_TABLE_NAME +
-						" WHERE (" + COL_PLAYER_ID + " = " + player1Id + " AND " + COL_SENDER_ID + " = " + player2Id + ") " +
-						"    OR (" + COL_PLAYER_ID + " = " + player2Id + " AND " + COL_SENDER_ID + " = " + player1Id + ") " +
+						" WHERE (" + COL_PLAYER_ID + " = " + player1Id + " AND " + COL_TARGET_ID + " = " + player2Id + ") " +
+						"    OR (" + COL_PLAYER_ID + " = " + player2Id + " AND " + COL_TARGET_ID + " = " + player1Id + ") " +
 						" ORDER BY " + COL_TIMESTAMP + " ASC;"; 
 
 			_reader = _command.ExecuteReader();
 			while (_reader.Read())
 			{
-				int senderId = _reader.GetInt32(0);
+				int targetId = _reader.GetInt32(0);
 				string message = _reader.GetString(1);
 				string timestamp = _reader.GetString(2);
 
-				messages.Add((senderId, message, timestamp));
+				messages.Add((targetId, message, timestamp));
 			}
 			Debug.Log($"Messages found: {messages.Count}");
 			_reader.Close();
