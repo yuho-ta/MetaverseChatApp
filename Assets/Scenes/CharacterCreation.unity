@@ -1881,7 +1881,6 @@ MonoBehaviour:
   AlertMessage: {fileID: 1572194635}
   Panel: {fileID: 1618693148}
   signupButton: {fileID: 9917701}
-  playerController: {fileID: 814803323}
 --- !u!114 &121102672
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2726,7 +2725,6 @@ MonoBehaviour:
   SidePanel: {fileID: 295543849}
   AvatarReferences: {fileID: 11400000, guid: 64fdaf6301ddadf4984fbd23b73c1671, type: 2}
   Avatar: {fileID: 814803321}
-  playerController: {fileID: 814803323}
 --- !u!114 &165149801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3476,6 +3474,9 @@ MonoBehaviour:
   targetName: {fileID: 1721450500}
   friendPanel: {fileID: 1924749560}
   friendsListItem: {fileID: 203655693}
+  sentMessageTemplate: {fileID: 1430692898}
+  replyMessageTemplate: {fileID: 270286951}
+  ContentTransform: {fileID: 1758818941}
   friendsListItemButton: {fileID: 203655697}
 --- !u!1 &215520949
 GameObject:
@@ -4148,15 +4149,15 @@ RectTransform:
   m_GameObject: {fileID: 270286951}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.511327, y: 1.511327, z: 1.511327}
+  m_LocalScale: {x: 1.5113269, y: 1.5113269, z: 1.5113269}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1866093189}
-  m_Father: {fileID: 1758818941}
+  m_Father: {fileID: 439883898}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 125, y: -68.41}
+  m_AnchoredPosition: {x: 145, y: -68.40999}
   m_SizeDelta: {x: 250, y: 53.41}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &270286953
@@ -4578,6 +4579,7 @@ MonoBehaviour:
   FriendsListItem: {fileID: 203655693}
   SentMessageTemplate: {fileID: 1430692898}
   ReplyMessageTemplate: {fileID: 270286951}
+  TargetName: {fileID: 1721450500}
   MessagePanelBackButton: {fileID: 121140724}
   FriendPanelBackButton: {fileID: 15070053}
   ChatSendButton: {fileID: 1091950538}
@@ -6535,7 +6537,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -5}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &377332471
@@ -7796,6 +7798,8 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1758818941}
+  - {fileID: 1430692899}
+  - {fileID: 270286952}
   m_Father: {fileID: 1654119601}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -20636,10 +20640,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ChannelsToJoinOnConnect: []
-  FriendsList:
-  - Joe
-  - Caren
   HistoryLengthToFetch: 0
+  selectedChannelName: 
   FriendListUiItemtoInstantiate: {fileID: 203655693}
   ShowState: 1
   TestLength: 2048
@@ -23879,15 +23881,15 @@ RectTransform:
   m_GameObject: {fileID: 1430692898}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.511327, y: 1.511327, z: 1.511327}
+  m_LocalScale: {x: 1.5113269, y: 1.5113269, z: 1.5113269}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1205334031}
-  m_Father: {fileID: 1758818941}
+  m_Father: {fileID: 439883898}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 125, y: -10}
+  m_AnchoredPosition: {x: 145, y: -10}
   m_SizeDelta: {x: 250, y: 53.41}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1430692900
@@ -26744,7 +26746,6 @@ MonoBehaviour:
   SignUpPanel: {fileID: 121102667}
   LoginPanel: {fileID: 165149796}
   ContentTransform: {fileID: 1526772488}
-  playerController: {fileID: 814803323}
 --- !u!114 &1618693150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -29093,7 +29094,7 @@ GameObject:
   - component: {fileID: 1758818943}
   - component: {fileID: 1758818942}
   m_Layer: 5
-  m_Name: Content
+  m_Name: MessageContent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -29110,9 +29111,7 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1430692899}
-  - {fileID: 270286952}
+  m_Children: []
   m_Father: {fileID: 439883898}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}

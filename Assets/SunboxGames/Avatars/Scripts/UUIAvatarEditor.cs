@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using TMPro;
 using SQLiter;
 using Player;
+using Photon.Chat.Demo;
 
 namespace Sunbox.Avatars {
 
@@ -46,8 +47,8 @@ namespace Sunbox.Avatars {
 
         private Vector3 _cameraPosition;
         private Vector3 _cameraRotation;
-        private Vector3 _enlargedCameraPosition = new Vector3(5,1,10);
-        private Vector3 _enlargedCameraRotation = new Vector3(8,180,0);
+        private Vector3 _enlargedCameraPosition = new Vector3(5,0.1f,8);
+        private Vector3 _enlargedCameraRotation = new Vector3(12,1,0);
 
         private ClothingDropdownWrapper _hatClothingDropdown;
         private ClothingDropdownWrapper _topClothingDropdown;
@@ -58,7 +59,6 @@ namespace Sunbox.Avatars {
         private UClothingItem _hiddenGlasses;
         
         private List<SliderWrapper> _sliders = new List<SliderWrapper>();
-        public PlayerController playerController;
 
 
 
@@ -97,7 +97,9 @@ namespace Sunbox.Avatars {
                 SidePanel.SetActive(true);
                 Camera.transform.position = _enlargedCameraPosition;
                 Camera.transform.rotation = Quaternion.Euler(_enlargedCameraRotation);
-                SQLiter.SQLite.Instance.UpdateClothInfo(playerController.playerId, AvatarCustomization.ToConfigString(AvatarCustomization.Instance));
+                ChatGui chatGuiInstance = ChatGui.Instance;
+                int playerId = SQLiter.SQLite.Instance.GetPlayerId(chatGuiInstance.UserName);
+                SQLiter.SQLite.Instance.UpdateClothInfo(playerId, AvatarCustomization.ToConfigString(AvatarCustomization.Instance));
             });
         }
 

@@ -14,7 +14,6 @@ namespace Player{
         public GameObject AlertMessage;
         public GameObject Panel;
         public Button signupButton;
-        public PlayerController playerController;
 
         void Start()
         {
@@ -26,8 +25,6 @@ namespace Player{
         {
             string username = usernameInput.text;
             string password = passwordInput.text;
-            playerController.username = username;
-            playerController.password = password;
             Debug.Log($"username: '{username}', password: '{password}'");
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
             {
@@ -35,7 +32,7 @@ namespace Player{
             }
             else
             {
-                int playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);
+                int playerId = SQLiter.SQLite.Instance.GetPlayerId(username);
                 Debug.Log($"   PlayerId:{playerId}");
                 if (playerId != -1)
                 {
@@ -48,6 +45,7 @@ namespace Player{
                     {
                         chatGui.UserName = username.Trim();
                         chatGui.Connect();
+                        chatGui.selectedChannelName = "General";
                     }
                     else
                     {
@@ -56,7 +54,6 @@ namespace Player{
 
                     Panel.SetActive(true);
                     SQLiter.SQLite.Instance.InsertPlayer(username, password);
-                    playerController.playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);
                 }
             }
         }

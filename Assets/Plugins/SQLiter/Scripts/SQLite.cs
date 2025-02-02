@@ -220,20 +220,16 @@ namespace SQLiter
 		/// http://www.sqlite.org/lang_insert.html
 		/// name must be unique, it's our primary key
 		/// </summary>
-		private int player_count = 0;
 		public void InsertPlayer(string name, string password)
 		{
 			name = name.ToLower();
-			player_count += 1;
 			// note - this will replace any item that already exists, overwriting them.  
 			// normal INSERT without the REPLACE will throw an error if an item already exists
 			_sqlString = "INSERT OR REPLACE INTO " + SQL_TABLE_NAME
 				+ " ("
-				+ COL_PLAYER_ID + ","
 				+ COL_NAME + ","
 				+ COL_PASSWORD
-				+ ") VALUES ("
-				+ player_count + ",'"  
+				+ ") VALUES ('"
 				+ name + "',"        
 				+ "'" + password + "'"
 				+ ");";
@@ -271,7 +267,29 @@ namespace SQLiter
 
 			ExecuteNonQuery(_sqlString);
 		}
+		public void InsertFriend(int playerId, int friendId)
+		{
+			_sqlString = "INSERT OR REPLACE INTO " + FRIENDS_TABLE_NAME
+				+ " (" + COL_PLAYER_ID + "," + COL_FRIEND_ID + ") VALUES ("
+				+ playerId + ", " + friendId + ");";
 
+			if (DebugMode)
+				Debug.Log(_sqlString);
+			ExecuteNonQuery(_sqlString);
+		}
+		public void InsertMessage(int playerId, int senderId, string message, string timestamp)
+		{
+			_sqlString = "INSERT INTO " + MESSAGES_TABLE_NAME
+				+ " (" + COL_PLAYER_ID + ", " + COL_SENDER_ID + ", " 
+				+ COL_MESSAGE_TEXT + ", " + COL_TIMESTAMP + ") VALUES ("
+				+ playerId + ", " + senderId + ", '" 
+				+ message.Replace("'", "''") + "', '" 
+				+ timestamp + "');";
+
+			if (DebugMode)
+				Debug.Log(_sqlString);
+			ExecuteNonQuery(_sqlString);
+		}
 		#endregion
 
 		#region Query Values
@@ -305,6 +323,59 @@ namespace SQLiter
 			_connection.Close();
 		}
 
+		public List<string> GetAllFriends(int playerId)
+		{
+			_connection.Open();
+			List<string> friendNames = new List<string>();
+
+			_command.CommandText = "SELECT " + SQL_TABLE_NAME + "." + COL_NAME +
+						" FROM " + FRIENDS_TABLE_NAME +
+						" INNER JOIN " + SQL_TABLE_NAME + 
+						" ON " + FRIENDS_TABLE_NAME + "." + COL_FRIEND_ID + " = " + SQL_TABLE_NAME + "." + COL_PLAYER_ID +
+						" WHERE " + FRIENDS_TABLE_NAME + "." + COL_PLAYER_ID + " = " + playerId + ";";
+			_reader = _command.ExecuteReader();
+			while (_reader.Read())
+			{
+				string friendName = _reader.GetString(0);
+				if (friendName != null)
+				{
+					friendNames.Add(friendName.ToString());
+				}
+			}
+			_reader.Close();
+			_connection.Close();
+
+			return friendNames;
+		}
+
+
+		public List<(int senderId, string message, string timestamp)> GetAllMessages(int player1Id, int player2Id)
+		{
+			_connection.Open();
+			List<(int senderId, string message, string timestamp)> messages = new List<(int, string, string)>();
+
+			_command.CommandText = "SELECT " + COL_SENDER_ID + ", " + COL_MESSAGE_TEXT + ", " + COL_TIMESTAMP +
+						" FROM " + MESSAGES_TABLE_NAME +
+						" WHERE (" + COL_PLAYER_ID + " = " + player1Id + " AND " + COL_SENDER_ID + " = " + player2Id + ") " +
+						"    OR (" + COL_PLAYER_ID + " = " + player2Id + " AND " + COL_SENDER_ID + " = " + player1Id + ") " +
+						" ORDER BY " + COL_TIMESTAMP + " ASC;"; 
+
+			_reader = _command.ExecuteReader();
+			while (_reader.Read())
+			{
+				int senderId = _reader.GetInt32(0);
+				string message = _reader.GetString(1);
+				string timestamp = _reader.GetString(2);
+
+				messages.Add((senderId, message, timestamp));
+			}
+			Debug.Log($"Messages found: {messages.Count}");
+			_reader.Close();
+			_connection.Close();
+			return messages;
+		}
+
+	
 		public int ValidateUser(string name, string password)
 		{
 			int playerId = -1;
@@ -389,11 +460,11 @@ namespace SQLiter
 		/// <param name="column"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		public int GetPlayerId(string column, string value)
+		public int GetPlayerId(string value)
 		{
 			int sel = -1;
 			_connection.Open();
-			_command.CommandText = "SELECT " + column + " FROM " + SQL_TABLE_NAME + " WHERE " + COL_NAME + "='" + value + "'";
+			_command.CommandText = "SELECT " + COL_PLAYER_ID + " FROM " + SQL_TABLE_NAME + " WHERE " + COL_NAME + "='" + value + "'";
 			_reader = _command.ExecuteReader();
 			if (_reader.Read())
 				sel = _reader.GetInt32(0);
@@ -477,6 +548,16 @@ namespace SQLiter
 				_connection = null;
 			}
 		}
+		public void DeleteFriend(int playerId, int friendId)
+		{
+			_sqlString = "DELETE FROM " + FRIENDS_TABLE_NAME
+				+ " WHERE " + COL_PLAYER_ID + " = " + playerId
+				+ " AND " + COL_FRIEND_ID + " = " + friendId + ";";
+
+			if (DebugMode)
+				Debug.Log(_sqlString);
+			ExecuteNonQuery(_sqlString);
+		}
 		#endregion
 
 		/// <summary>
@@ -491,57 +572,6 @@ namespace SQLiter
 			_command.ExecuteNonQuery();
 			_connection.Close();
 		}
-
-		#region Friends
-        public void AddFriend(int playerId, int friendId)
-        {
-            _connection.Open();
-            _command.CommandText = $"INSERT INTO {FRIENDS_TABLE_NAME} ({COL_PLAYER_ID}, {COL_FRIEND_ID}) " +
-                $"VALUES ({playerId}, {friendId})";
-            _command.ExecuteNonQuery();
-            _connection.Close();
-        }
-
-        public void GetFriends(int playerId)
-        {
-            _connection.Open();
-            _command.CommandText = $"SELECT {COL_FRIEND_ID} FROM {FRIENDS_TABLE_NAME} WHERE {COL_PLAYER_ID} = {playerId}";
-            _reader = _command.ExecuteReader();
-            while (_reader.Read())
-            {
-                Debug.Log("Friend ID: " + _reader.GetInt32(0));
-            }
-            _reader.Close();
-            _connection.Close();
-        }
-        #endregion
-
-        #region Messages
-        public void SendMessage(int playerId, int senderId, string messageText)
-        {
-            _connection.Open();
-            string timestamp = System.DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
-            _command.CommandText = $"INSERT INTO {MESSAGES_TABLE_NAME} " +
-                $"({COL_PLAYER_ID}, {COL_SENDER_ID}, {COL_MESSAGE_TEXT}, {COL_TIMESTAMP}) " +
-                $"VALUES ({playerId}, {senderId}, '{messageText}', '{timestamp}')";
-            _command.ExecuteNonQuery();
-            _connection.Close();
-        }
-
-        public void GetMessages(int playerId)
-        {
-            _connection.Open();
-            _command.CommandText = $"SELECT {COL_SENDER_ID}, {COL_MESSAGE_TEXT}, {COL_TIMESTAMP} " +
-                $"FROM {MESSAGES_TABLE_NAME} WHERE {COL_PLAYER_ID} = {playerId} ORDER BY {COL_TIMESTAMP} DESC";
-            _reader = _command.ExecuteReader();
-            while (_reader.Read())
-            {
-                Debug.Log($"From: { _reader.GetInt32(0) }, Message: { _reader.GetString(1) }, Time: { _reader.GetString(2) }");
-            }
-            _reader.Close();
-            _connection.Close();
-        }
-        #endregion
 
 		/// <summary>
 		/// Clean up everything for SQLite

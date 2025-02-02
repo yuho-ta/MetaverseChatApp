@@ -13,6 +13,7 @@ using UnityEngine.UI;
 using Photon.Chat;
 using Photon.Realtime;
 using AuthenticationValues = Photon.Chat.AuthenticationValues;
+using SQLiter;
 #if PHOTON_UNITY_NETWORKING
 using Photon.Pun;
 #endif
@@ -55,15 +56,14 @@ namespace Photon.Chat.Demo
 
         public string[] ChannelsToJoinOnConnect; // set in inspector. Demo channels to join automatically.
 
-        public string[] FriendsList;
-
         public int HistoryLengthToFetch; // set in inspector. Up to a certain degree, previously sent messages can be fetched for context
 
         public string UserName { get; set; }
 
-        private string selectedChannelName; // mainly used for GUI/input
+        public string selectedChannelName; // mainly used for GUI/input
 
         public ChatClient chatClient;
+        private string[] FriendsList;
 
         #if !PHOTON_UNITY_NETWORKING
         public ChatAppSettings ChatAppSettings
@@ -191,12 +191,6 @@ namespace Photon.Chat.Demo
                 
                 this.chatClient.SendPrivateMessage(this.chatClient.AuthValues.UserId, this.testBytes, true);
             }
-            if (string.IsNullOrEmpty(this.selectedChannelName))
-            {
-                Debug.LogWarning("selectedChannelName is null or empty, setting default value.");
-                this.selectedChannelName = "General"; 
-            }
-
             bool doingPrivateChat = this.chatClient.PrivateChannels.ContainsKey(this.selectedChannelName);
             string privateChatTarget = string.Empty;
             if (doingPrivateChat)
@@ -268,6 +262,7 @@ namespace Photon.Chat.Demo
 
                     string targetUser = subtokens[0];
                     string message = subtokens[1];
+                    Debug.Log($"Sending private message to {targetUser}: {message}"); 
                     this.chatClient.SendPrivateMessage(targetUser, message);
                 }
                 else if ((tokens[0].Equals("\\join") || tokens[0].Equals("\\j")) && !string.IsNullOrEmpty(tokens[1]))
@@ -338,21 +333,20 @@ namespace Photon.Chat.Demo
             {
                 this.chatClient.Subscribe(this.ChannelsToJoinOnConnect, this.HistoryLengthToFetch);
             }
+            int playerId = SQLiter.SQLite.Instance.GetPlayerId(this.UserName);
+            this.FriendsList = SQLiter.SQLite.Instance.GetAllFriends(playerId).ToArray();
 
             if (this.FriendsList!=null  && this.FriendsList.Length>0)
             {
-                this.chatClient.AddFriends(this.FriendsList); // Add some users to the server-list to get their status updates
-
-                // add to the UI as well
+                this.chatClient.AddFriends(this.FriendsList); 
+        
                 foreach(string _friend in this.FriendsList)
                 {
                     if (this.FriendListUiItemtoInstantiate != null && _friend!= this.UserName)
                     {
                         this.InstantiateFriendButton(_friend);
                     }
-
                 }
-
             }
 
             if (this.FriendListUiItemtoInstantiate != null)
@@ -361,7 +355,7 @@ namespace Photon.Chat.Demo
             }
 
 
-            this.chatClient.SetOnlineStatus(ChatUserStatus.Online); // You can set your online state (without a mesage).
+            this.chatClient.SetOnlineStatus(ChatUserStatus.Online); 
         }
 
         public void OnDisconnected()
@@ -476,6 +470,24 @@ namespace Photon.Chat.Demo
                 // update text
                 this.ShowChannel(this.selectedChannelName);
             }
+        }
+
+        public void OnAddFriend(string name)
+        {
+            string[] friends = { name };
+            this.chatClient.AddFriends(friends);
+            int playerId = SQLiter.SQLite.Instance.GetPlayerId(this.UserName);
+            int friendId = SQLiter.SQLite.Instance.GetPlayerId(name);
+            SQLiter.SQLite.Instance.InsertFriend(playerId, friendId);
+        }
+
+        public void OnDeleteFriend(string name)
+        {
+            string[] friends = { name };
+            this.chatClient.RemoveFriends(friends);
+            int playerId = SQLiter.SQLite.Instance.GetPlayerId(this.UserName);
+            int friendId = SQLiter.SQLite.Instance.GetPlayerId(name);
+            SQLiter.SQLite.Instance.DeleteFriend(playerId, friendId);
         }
 
         public void OnPrivateMessage(string sender, object message, string channelName)

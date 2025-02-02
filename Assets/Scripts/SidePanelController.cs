@@ -1,8 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Photon.Chat.Demo;
+using SQLiter;
 using TMPro;
 
 public class SidePanelController : MonoBehaviour
@@ -19,6 +21,7 @@ public class SidePanelController : MonoBehaviour
     public GameObject FriendsListItem;
     public GameObject SentMessageTemplate;
     public GameObject ReplyMessageTemplate;
+    public GameObject TargetName;
     public Button MessagePanelBackButton;
     public Button FriendPanelBackButton;
     public Button ChatSendButton;
@@ -59,12 +62,20 @@ public class SidePanelController : MonoBehaviour
     void sendMessage()
         {
             ChatGui chatGuiInstance = ChatGui.Instance;
-            string target = MessagePanel.GetComponentInChildren<TextMeshProUGUI>().text;
-            string inputLine = "\\msg " + target + " " + ChatSendInput.text;
+            string target = TargetName.GetComponent<TextMeshProUGUI>().text;
+            string message = ChatSendInput.text;
+            ChatSendInput.text = "";
+            string inputLine = "\\msg " + target + " " + message;
             chatGuiInstance.SendChatMessage(inputLine);
-            Debug.Log("Done");
+        
+            int senderId = SQLiter.SQLite.Instance.GetPlayerId(target);
+            int playerId = SQLiter.SQLite.Instance.GetPlayerId(chatGuiInstance.UserName);
+            string timestamp = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+            SQLiter.SQLite.Instance.InsertMessage(playerId, senderId, message.ToString(), timestamp);
+
+
             GameObject sentMessage = (GameObject)Instantiate(SentMessageTemplate);
-            sentMessage.GetComponentInChildren<TextMeshProUGUI>().text = ChatSendInput.text;
+            sentMessage.GetComponentInChildren<TextMeshProUGUI>().text = chatGuiInstance.UserName + ": "+ ChatSendInput.text;
             sentMessage.transform.SetParent(ContentTransform, false);
             sentMessage.gameObject.SetActive(true);
     }

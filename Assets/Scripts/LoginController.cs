@@ -20,7 +20,7 @@ namespace Player{
         public GameObject SidePanel;
         public AvatarReferences AvatarReferences;
         public AvatarCustomization Avatar;
-        public PlayerController playerController;
+
 
         void Start()
         {
@@ -37,21 +37,19 @@ namespace Player{
             {
                 AlertMessage.SetActive(true);
             }
-            playerController.username = username;
-            playerController.password = password;
-            playerController.playerId = SQLiter.SQLite.Instance.ValidateUser(username, password);
             ChatGui chatGui = FindObjectOfType<ChatGui>(); 
             if (chatGui != null)
             {
                 chatGui.UserName = username.Trim();
                 chatGui.Connect();
+                chatGui.selectedChannelName = "General";
             }
             else
             {
                 Debug.LogError("ChatGui instance not found!");
             }
 
-            if (playerController.playerId != -1)
+            if (SQLiter.SQLite.Instance.ValidateUser(username, password) != -1)
             {
                 Dictionary<string, int> playerData = SQLiter.SQLite.Instance.GetPlayerCustomization(username, password);
                 Debug.Log($"{playerData}");

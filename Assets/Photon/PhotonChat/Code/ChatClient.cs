@@ -818,7 +818,6 @@ namespace Photon.Chat
                 {
                     { ChatParameterCode.Friends, friends },
                 };
-
             return this.chatPeer.SendOperation(ChatOperationCode.AddFriends, parameters, SendOptions.SendReliable);
         }
 
@@ -896,7 +895,6 @@ namespace Photon.Chat
                 {
                     { ChatParameterCode.Friends, friends },
                 };
-
             return this.chatPeer.SendOperation(ChatOperationCode.RemoveFriends, parameters, SendOptions.SendReliable);
         }
 

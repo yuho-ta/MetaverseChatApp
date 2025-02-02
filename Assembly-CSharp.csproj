@@ -94,7 +94,6 @@
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UUIAvatarEditor.cs" />
     <Compile Include="Assets\Scripts\SignUpController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\EyeController.cs" />
-    <Compile Include="Assets\Scripts\PlayerController.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\Constants.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\ClothingItem.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\IgnoreUiRaycastWhenInactive.cs" />
@@ -1123,8 +1122,8 @@
     <ProjectReference Include="PhotonUnityNetworking.Editor.csproj" />
     <ProjectReference Include="PhotonUnityNetworking.Utilities.PhotonPlayer.Editor.csproj" />
     <ProjectReference Include="PunDemos.DemoSlotcarEditor.csproj" />
-    <ProjectReference Include="PhotonRealtime.csproj" />
     <ProjectReference Include="PhotonChat.csproj" />
+    <ProjectReference Include="PhotonRealtime.csproj" />
     <ProjectReference Include="PhotonUnityNetworking.csproj" />
     <ProjectReference Include="PhotonUnityNetworking.Utilities.Culling.Editor.csproj" />
     <ProjectReference Include="PhotonUnityNetworking.Demos.csproj" />
