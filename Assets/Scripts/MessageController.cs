@@ -5,8 +5,9 @@ using UnityEngine.UI;
 using TMPro;
 using Photon.Chat.Demo;
 using SQLiter;
+using Photon.Pun;
 
-public class MessageController : MonoBehaviour
+public class MessageController : MonoBehaviourPunCallbacks
 {
     public string target;
     public GameObject messagePanel;
@@ -19,7 +20,14 @@ public class MessageController : MonoBehaviour
     public Button friendsListItemButton;
     void Start()
     {
-        friendsListItemButton.onClick.AddListener(showMessagePanel);
+        friendsListItemButton.onClick.AddListener(()=>
+        {
+            if (photonView.IsMine)
+            {
+                showMessagePanel();
+            }
+
+        });
     }
 
     void showMessagePanel(){

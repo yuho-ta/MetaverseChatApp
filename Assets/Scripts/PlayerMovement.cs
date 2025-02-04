@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Photon.Pun;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -21,10 +22,37 @@ public class PlayerMovement : MonoBehaviour
     public Button DanceButton;
     public Button ClapButton;
     public Button WaveButton;
+    public PhotonView photonView;
+
+    void Awake()
+    {
+        photonView = GetComponent<PhotonView>();
+    }
     void Start(){
-        DanceButton.onClick.AddListener(PlayDance);
-        ClapButton.onClick.AddListener(PlayClap);
-        WaveButton.onClick.AddListener(PlayWave);
+        DanceButton.onClick.AddListener(()=>
+            {
+                if (photonView.IsMine)
+                {
+                    PlayDance();
+                }
+
+            });
+        ClapButton.onClick.AddListener(()=>
+            {
+                if (photonView.IsMine)
+                {
+                    PlayClap();
+                }
+
+            });
+        WaveButton.onClick.AddListener(()=>
+            {
+                if (photonView.IsMine)
+                {
+                    PlayWave();
+                }
+
+            });
     }
     void Update()
     {

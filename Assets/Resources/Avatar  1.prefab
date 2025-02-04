@@ -862,6 +862,7 @@ GameObject:
   - component: {fileID: 4373653379150738509}
   - component: {fileID: 270792125355950383}
   - component: {fileID: 8752837722075567606}
+  - component: {fileID: 7828761351293585081}
   m_Layer: 0
   m_Name: Male_Avatar
   m_TagString: Untagged
@@ -976,6 +977,7 @@ MonoBehaviour:
   DanceButton: {fileID: 0}
   ClapButton: {fileID: 0}
   WaveButton: {fileID: 0}
+  photonView: {fileID: 0}
 --- !u!136 &270792125355950383
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1026,6 +1028,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &7828761351293585081
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2360254831853625181}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &2406582286550319124
 GameObject:
   m_ObjectHideFlags: 0
@@ -4815,6 +4839,7 @@ GameObject:
   - component: {fileID: 616743062650087732}
   - component: {fileID: 1171977596360108879}
   - component: {fileID: 7735424697920148433}
+  - component: {fileID: 927638814764696143}
   m_Layer: 0
   m_Name: Female_Avatar
   m_TagString: Untagged
@@ -4928,6 +4953,7 @@ MonoBehaviour:
   DanceButton: {fileID: 0}
   ClapButton: {fileID: 0}
   WaveButton: {fileID: 0}
+  photonView: {fileID: 0}
 --- !u!136 &1171977596360108879
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -4978,6 +5004,28 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
+--- !u!114 &927638814764696143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7969733422300893033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ObservedComponentsFoldoutOpen: 1
+  Group: 0
+  prefixField: -1
+  Synchronization: 3
+  OwnershipTransfer: 0
+  observableSearch: 2
+  ObservedComponents: []
+  sceneViewId: 0
+  InstantiationId: 0
+  isRuntimeInstantiated: 0
 --- !u!1 &8026434383760954279
 GameObject:
   m_ObjectHideFlags: 0

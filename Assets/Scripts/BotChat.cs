@@ -1,3 +1,5 @@
+
+using Photon.Pun;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,7 +8,7 @@ using TMPro;
 
 namespace AAA.Gemini
 {
-    public class BotChat : MonoBehaviour
+    public class BotChat : MonoBehaviourPunCallbacks
     {
         private GeminiConnection gemini;
         private string apiKey = "AIzaSyB_0v8PkkzByBg9VHS7t9q9yPp8U2uqwsc";
@@ -20,11 +22,31 @@ namespace AAA.Gemini
 
         private void Start()
         {
+            MessageInput.onValueChanged.RemoveAllListeners();
+            MessageInput.onValueChanged.AddListener((text) =>
+            {
+                if (photonView.IsMine)
+                {
+                    MessageInput.text = text;
+                }
+            });
             gemini = new GeminiConnection(apiKey);
             SentMessageTemplate.SetActive(false);
             ReplyMessageTemplate.SetActive(false);
-            BackButton.onClick.AddListener(() => ChatPanel.SetActive(false));
-            SendButton.onClick.AddListener(SendMessageToGemini);
+            BackButton.onClick.AddListener(() =>
+            {
+                if (photonView.IsMine)
+                {
+                   ChatPanel.SetActive(false);
+                }
+            });
+            SendButton.onClick.AddListener(() =>
+            {
+                if (photonView.IsMine)
+                {
+                   SendMessageToGemini();
+                }
+            });
         }
 
         public async void SendMessageToGemini()

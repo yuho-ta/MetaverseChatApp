@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,10 +9,9 @@ using System.Reflection;
 using System.Linq;
 using Sunbox.Avatars;
 using Photon.Chat.Demo;
-using Photon.Pun;
 
 namespace Player{
-    public class LoginController : MonoBehaviour
+    public class LoginController : MonoBehaviourPunCallbacks
     {
         public TMP_InputField usernameInput;
         public TMP_InputField passwordInput;
@@ -33,7 +33,30 @@ namespace Player{
 
         void Start()
         {
-            loginButton.onClick.AddListener(HandleLogin);
+            usernameInput.onValueChanged.RemoveAllListeners();
+            usernameInput.onValueChanged.AddListener((text) =>
+            {
+                if (photonView.IsMine)
+                {
+                    usernameInput.text = text;
+                }
+            });
+            passwordInput.onValueChanged.RemoveAllListeners();
+            passwordInput.onValueChanged.AddListener((text) =>
+            {
+                if (photonView.IsMine)
+                {
+                    passwordInput.text = text;
+                }
+            });
+            loginButton.onClick.AddListener(()=>
+            {
+                if (photonView.IsMine)
+                {
+                    HandleLogin();
+                }
+
+            });
             AlertMessage.SetActive(false);
         }
 

@@ -85,8 +85,8 @@
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChannelSelector.cs" />
     <Compile Include="Assets\Photon\PhotonChat\Demos\DemoChat\ChatAppIdCheckerUI.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\Extensions.cs" />
-    <Compile Include="Assets\Scripts\BotController.cs" />
     <Compile Include="Assets\Scripts\AvatarManager.cs" />
+    <Compile Include="Assets\Scripts\BotController.cs" />
     <Compile Include="Assets\Scripts\RoomManager.cs" />
     <Compile Include="Assets\SunboxGames\Avatars\Scripts\UFacialHair.cs" />
     <Compile Include="Assets\Scripts\BotButtonPosition.cs" />

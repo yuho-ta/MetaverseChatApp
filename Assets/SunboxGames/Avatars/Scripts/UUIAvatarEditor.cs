@@ -58,15 +58,10 @@ namespace Sunbox.Avatars {
         private UClothingItem _hiddenGlasses;
         
         private List<SliderWrapper> _sliders = new List<SliderWrapper>();
-        public PhotonView photonView;
-
-        void Awake()
-        {
-            photonView = GetComponent<PhotonView>();
-        }
+        private PhotonView ParentphotonView;
 
         void Start() {
-            photonView = GetComponent<PhotonView>();
+            ParentphotonView = GetComponent<PhotonView>();
             _cameraPosition = Camera.transform.position;
             _cameraRotation = Camera.transform.eulerAngles;
             SidePanel.SetActive(false);
@@ -82,35 +77,54 @@ namespace Sunbox.Avatars {
                 }
             }
 
-            MaleButton.onClick.AddListener(() => Avatar.SetGender(AvatarCustomization.AvatarGender.Male, true));
-            FemaleButton.onClick.AddListener(() => Avatar.SetGender(AvatarCustomization.AvatarGender.Female, true));
-
-            FaceButton.onClick.AddListener(() => {
-                ClearSectionContent_Internal();
-                ShowSliderList_Internal(AvatarCustomization.SECTION_FACE_STYLES);
-
-                _hiddenGlasses = Avatar.GetComponentsInChildren<UClothingItem>().FirstOrDefault(item => item.ClothingItem.SlotType == SlotType.Glasses);
-                if (_hiddenGlasses != null) {
-                    _hiddenGlasses.gameObject.SetActive(false);
+            MaleButton.onClick.AddListener(() =>{
+                if (photonView.IsMine)
+                { 
+                    Avatar.SetGender(AvatarCustomization.AvatarGender.Male, true);
                 }
             });
-            ClothingButton.onClick.AddListener(() => {
-                ClearSectionContent_Internal();
-                ShowClothingList_Internal();
+            FemaleButton.onClick.AddListener(() =>{
+                if (photonView.IsMine)
+                { 
+                    Avatar.SetGender(AvatarCustomization.AvatarGender.Female, true);
+                }
+            });
 
-                if (_hiddenGlasses != null) {
-                    _hiddenGlasses.gameObject.SetActive(true);
+            FaceButton.onClick.AddListener(() =>{
+                if (photonView.IsMine)
+                { 
+                    ClearSectionContent_Internal();
+                    ShowSliderList_Internal(AvatarCustomization.SECTION_FACE_STYLES);
+
+                    _hiddenGlasses = Avatar.GetComponentsInChildren<UClothingItem>().FirstOrDefault(item => item.ClothingItem.SlotType == SlotType.Glasses);
+                    if (_hiddenGlasses != null) {
+                        _hiddenGlasses.gameObject.SetActive(false);
+                    }
+                }
+            });
+            ClothingButton.onClick.AddListener(() =>{
+                if (photonView.IsMine)
+                { 
+                    ClearSectionContent_Internal();
+                    ShowClothingList_Internal();
+
+                    if (_hiddenGlasses != null) {
+                        _hiddenGlasses.gameObject.SetActive(true);
+                    }
                 }
             });
             SliderTemplate.SetActive(false);
             TitleTemplate.SetActive(false);
             ClothingItemDropdownTemplate.SetActive(false);
-            FinishButton.onClick.AddListener(() => {
-                Canvas.SetActive(false);
-                SidePanel.SetActive(true);
-                ChatGui chatGuiInstance = ChatGui.Instance;
-                int playerId = SQLiter.SQLite.Instance.GetPlayerId(chatGuiInstance.UserName);
-                SQLiter.SQLite.Instance.UpdateClothInfo(playerId, AvatarCustomization.ToConfigString(AvatarCustomization.Instance));
+            FinishButton.onClick.AddListener(() =>{
+                if (photonView.IsMine)
+                { 
+                    Canvas.SetActive(false);
+                    SidePanel.SetActive(true);
+                    ChatGui chatGuiInstance = ChatGui.Instance;
+                    int playerId = SQLiter.SQLite.Instance.GetPlayerId(chatGuiInstance.UserName);
+                    SQLiter.SQLite.Instance.UpdateClothInfo(playerId, AvatarCustomization.ToConfigString(AvatarCustomization.Instance));
+                }
             });
         }
 
@@ -174,7 +188,7 @@ namespace Sunbox.Avatars {
         private void ShowClothingList_Internal() {
 
             if (_hatClothingDropdown == null) {
-                _hatClothingDropdown = new ClothingDropdownWrapper(ClothingItemDropdownTemplate, Avatar, SlotType.Hat).AttachTo(ContentTransform);
+                _hatClothingDropdown = new ClothingDropdownWrapper(ParentphotonView, ClothingItemDropdownTemplate, Avatar, SlotType.Hat).AttachTo(ContentTransform);
                 _hatClothingDropdown.Title = "Hat";
             }
             else {
@@ -182,7 +196,7 @@ namespace Sunbox.Avatars {
             }
 
             if (_topClothingDropdown == null) {
-                _topClothingDropdown = new ClothingDropdownWrapper(ClothingItemDropdownTemplate, Avatar, SlotType.Top).AttachTo(ContentTransform);
+                _topClothingDropdown = new ClothingDropdownWrapper(ParentphotonView, ClothingItemDropdownTemplate, Avatar, SlotType.Top).AttachTo(ContentTransform);
                 _topClothingDropdown.Title = "Torso/Top";
             }
             else {
@@ -190,7 +204,7 @@ namespace Sunbox.Avatars {
             }
             
             if (_bottomClothingDropdown == null) {
-                _bottomClothingDropdown = new ClothingDropdownWrapper(ClothingItemDropdownTemplate, Avatar, SlotType.Bottom).AttachTo(ContentTransform);
+                _bottomClothingDropdown = new ClothingDropdownWrapper(ParentphotonView, ClothingItemDropdownTemplate, Avatar, SlotType.Bottom).AttachTo(ContentTransform);
                 _bottomClothingDropdown.Title = "Pants/Bottom";
             }
             else {
@@ -198,7 +212,7 @@ namespace Sunbox.Avatars {
             }
             
             if (_glassesClothingDropdown == null) {
-                _glassesClothingDropdown = new ClothingDropdownWrapper(ClothingItemDropdownTemplate, Avatar, SlotType.Glasses).AttachTo(ContentTransform);
+                _glassesClothingDropdown = new ClothingDropdownWrapper(ParentphotonView, ClothingItemDropdownTemplate, Avatar, SlotType.Glasses).AttachTo(ContentTransform);
                 _glassesClothingDropdown.Title = "Glasses";
             }
             else {
@@ -206,7 +220,7 @@ namespace Sunbox.Avatars {
             }
 
             if (_shoesClothingDropdown == null) {
-                _shoesClothingDropdown = new ClothingDropdownWrapper(ClothingItemDropdownTemplate, Avatar, SlotType.Shoes).AttachTo(ContentTransform);
+                _shoesClothingDropdown = new ClothingDropdownWrapper(ParentphotonView, ClothingItemDropdownTemplate, Avatar, SlotType.Shoes).AttachTo(ContentTransform);
                 _shoesClothingDropdown.Title = "Shoes";
             }
             else {
@@ -217,7 +231,8 @@ namespace Sunbox.Avatars {
         private void AddSlider_Internal(FieldInfo field, FieldInfo[] fields) {
             AvatarFloatFieldAttribute floatFieldAttribute = field.GetCustomAttribute<AvatarFloatFieldAttribute>();
             if (floatFieldAttribute != null && !floatFieldAttribute.IgnoreInPlayMode) {
-                SliderWrapper slider = new SliderWrapper(field.Name, SliderTemplate) {
+
+                SliderWrapper slider = new SliderWrapper(ParentphotonView, field.Name, SliderTemplate) {
                     Title = floatFieldAttribute.DisplayName,
                     CurrentValue = (float) field.GetValue(Avatar),
                     MinValue = floatFieldAttribute.SourceMinValue,
@@ -225,8 +240,11 @@ namespace Sunbox.Avatars {
                 };
                 
                 slider.OnValueChanged = (value) => {
-                    field.SetValue(Avatar, (float) value);
-                    Avatar.UpdateCustomization();
+                    if (photonView.IsMine)
+                    { 
+                        field.SetValue(Avatar, (float) value);
+                        Avatar.UpdateCustomization();
+                    }
                 };
 
                 slider.AttachTo(ContentTransform);
@@ -244,18 +262,21 @@ namespace Sunbox.Avatars {
                 // Check if its variation field
                 if (integerFieldAttribute.IsVariationField) {
                     IVariations variationsInterface = (IVariations) dependancyArrayObject.GetValue(0);
-                    
-                    SliderWrapper slider = new SliderWrapper(field.Name, SliderTemplate) {
+                    SliderWrapper slider = new SliderWrapper(ParentphotonView, field.Name, SliderTemplate) {
                         CurrentValue = (int) field.GetValue(Avatar),
                         MinValue = 0,
                         MaxValue = variationsInterface.GetVariationsCount() - 1,
                         WholeNumbers = true
                     };
 
+
                     slider.OnValueChanged = (value) => {
-                        field.SetValue(Avatar, (int) value);
-                        Avatar.UpdateCustomization();
-                        slider.Title = $"{integerFieldAttribute.DisplayName} ({variationsInterface.GetVariationName((int) value)})";
+                        if (photonView.IsMine)
+                        { 
+                            field.SetValue(Avatar, (int) value);
+                            Avatar.UpdateCustomization();
+                            slider.Title = $"{integerFieldAttribute.DisplayName} ({variationsInterface.GetVariationName((int) value)})";
+                        }
                     };
 
                     slider.AttachTo(ContentTransform);
@@ -263,17 +284,21 @@ namespace Sunbox.Avatars {
                     _sliders.Add(slider);
                 }
                 else {
-                    SliderWrapper slider = new SliderWrapper(field.Name, SliderTemplate) {
+                    SliderWrapper slider = new SliderWrapper(ParentphotonView, field.Name, SliderTemplate) {
                         CurrentValue = (int) field.GetValue(Avatar),
                         MinValue = 0,
                         MaxValue = dependancyArrayObject.Length - 1,
                         WholeNumbers = true
                     };
 
+
                     slider.OnValueChanged = (value) => {
-                        field.SetValue(Avatar, (int) value);
-                        Avatar.UpdateCustomization();
-                        slider.Title = $"{integerFieldAttribute.DisplayName} ({GetObjectName_Internal(dependancyArrayObject, (int) value)})";
+                        if (photonView.IsMine)
+                        { 
+                            field.SetValue(Avatar, (int) value);
+                            Avatar.UpdateCustomization();
+                            slider.Title = $"{integerFieldAttribute.DisplayName} ({GetObjectName_Internal(dependancyArrayObject, (int) value)})";
+                        }
                     };
 
                     slider.AttachTo(ContentTransform);
@@ -333,8 +358,11 @@ namespace Sunbox.Avatars {
 
             private const float MIN_HEIGHT = 60;
             private const float MAX_HEIGHT = 100;
+            private PhotonView ParentPhotonView;
 
-            public ClothingDropdownWrapper(GameObject ClothingDropdownTemplate, AvatarCustomization avatar, SlotType slotType) {
+
+            public ClothingDropdownWrapper(PhotonView ParentPhotonView, GameObject ClothingDropdownTemplate, AvatarCustomization avatar, SlotType slotType) {
+                this.ParentPhotonView = ParentPhotonView;
                 _clothingDropdownTemplate = ClothingDropdownTemplate;
                 _avatar = avatar;
                 _slotType = slotType;
@@ -358,16 +386,19 @@ namespace Sunbox.Avatars {
                 _dropdown.AddOptions(list);
             
                 _dropdown.onValueChanged.AddListener((index) => {
-                    _selectedClothingItem = _availableClothingItems[index];
-                    _selectedClothingItemIndex = index;
+                    if (this.ParentPhotonView.IsMine)
+                    { 
+                        _selectedClothingItem = _availableClothingItems[index];
+                        _selectedClothingItemIndex = index;
 
-                    _avatar.SetClothingItemVariation(_slotType, 0);
+                        _avatar.SetClothingItemVariation(_slotType, 0);
 
-                    _avatar.AttachClothingItem(_selectedClothingItem);
-                    _avatar.UpdateClothing();
+                        _avatar.AttachClothingItem(_selectedClothingItem);
+                        _avatar.UpdateClothing();
 
-                    UpdateSlider_Internal();
-                    UpdateSliderText_Internal(_selectedClothingItem.Variations[0].name);
+                        UpdateSlider_Internal();
+                        UpdateSliderText_Internal(_selectedClothingItem.Variations[0].name);
+                    }
                 });
 
                 _instance.transform.SetParent(transform, false);
@@ -384,8 +415,11 @@ namespace Sunbox.Avatars {
                 if (_dropdown != null) {
                     _dropdown.onValueChanged.RemoveAllListeners();
                     _dropdown.onValueChanged.AddListener((index) => {
-                        ClothingItem selectedClothingItem = _availableClothingItems[index];
-                        _onClothingItemSelected.Invoke(selectedClothingItem);
+                        if (this.ParentPhotonView.IsMine)
+                        { 
+                            ClothingItem selectedClothingItem = _availableClothingItems[index];
+                            _onClothingItemSelected.Invoke(selectedClothingItem);
+                        }
                     });
                 }
             }
@@ -433,9 +467,12 @@ namespace Sunbox.Avatars {
                 _slider.wholeNumbers = true;
                 _slider.onValueChanged.RemoveAllListeners();
                 _slider.onValueChanged.AddListener((value) => {
-                    _avatar.SetClothingItemVariation(_slotType, (int) value);
-                    _avatar.UpdateClothing();
-                    UpdateSliderText_Internal(_selectedClothingItem.Variations[(int) value].name);
+                    if (this.ParentPhotonView.IsMine)
+                    { 
+                        _avatar.SetClothingItemVariation(_slotType, (int) value);
+                        _avatar.UpdateClothing();
+                        UpdateSliderText_Internal(_selectedClothingItem.Variations[(int) value].name);
+                    }
                 });
             }
             
@@ -501,8 +538,10 @@ namespace Sunbox.Avatars {
             private UnityAction<float> _onValueChanged;
             private string _title;
             private float _currentValue;
+            private PhotonView ParentPhotonView;
 
-            public SliderWrapper(string fieldName, GameObject SliderTemplate) {
+            public SliderWrapper(PhotonView ParentPhotonView, string fieldName, GameObject SliderTemplate) {
+                this.ParentPhotonView = ParentPhotonView;
                 _sliderTemplate = SliderTemplate;
                 FieldName = fieldName;
             } 
@@ -518,8 +557,11 @@ namespace Sunbox.Avatars {
                 _slider.value = _currentValue;
                 _slider.onValueChanged.RemoveAllListeners();
                 _slider.onValueChanged.AddListener((value) => {
-                    _currentValue = value;
-                    _onValueChanged.Invoke(value);
+                    if (this.ParentPhotonView.IsMine)
+                    { 
+                        _currentValue = value;
+                        _onValueChanged.Invoke(value);
+                    }
                 });
                 _instantiatedSlider.transform.SetParent(transform, false);
                 _instantiatedSlider.name += CONTENT_STRING;

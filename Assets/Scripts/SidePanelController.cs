@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using Photon.Chat.Demo;
 using SQLiter;
 using TMPro;
 
-    public class SidePanelController : MonoBehaviour
+    public class SidePanelController : MonoBehaviourPunCallbacks
     {
         public static SidePanelController Instance { get; private set; }
         public string target;
@@ -43,6 +44,14 @@ using TMPro;
         
         void Start()
         {
+            ChatSendInput.onValueChanged.RemoveAllListeners();
+            ChatSendInput.onValueChanged.AddListener((text) =>
+            {
+                if (photonView.IsMine)
+                {
+                    ChatSendInput.text = text;
+                }
+            });
             MessagePanel.SetActive(false);
             SentMessageTemplate.SetActive(false);
             ReplyMessageTemplate.SetActive(false);
@@ -50,26 +59,44 @@ using TMPro;
             FriendPanel.SetActive(false);
             FriendsListItem.SetActive(false);
             DanceButton.onClick.AddListener(() => {
-                DancePanel.SetActive(!DancePanel.activeSelf);
+                if (photonView.IsMine)
+                {
+                    DancePanel.SetActive(!DancePanel.activeSelf);
+                }
             });
             FriendButton.onClick.AddListener(() => {
-                FriendPanel.SetActive(!FriendPanel.activeSelf);
-                Side.SetActive(false);
+                if (photonView.IsMine)
+                {
+                    FriendPanel.SetActive(!FriendPanel.activeSelf);
+                    Side.SetActive(false);
+                }
             });
             ClothesButton.onClick.AddListener(() => {
+                if (photonView.IsMine)
+                {
                     Canvas.SetActive(true);
                     SidePanel.SetActive(false);
+                }
             });
             MessagePanelBackButton.onClick.AddListener(() => {
-                MessagePanel.SetActive(false);
-                FriendPanel.SetActive(true);
+                if (photonView.IsMine)
+                {
+                    MessagePanel.SetActive(false);
+                    FriendPanel.SetActive(true);
+                }
             });
             FriendPanelBackButton.onClick.AddListener(() => {
-                FriendPanel.SetActive(false);
-                Side.SetActive(true);
+                if (photonView.IsMine)
+                {
+                    FriendPanel.SetActive(false);
+                    Side.SetActive(true);
+                }
             });
             ChatSendButton.onClick.AddListener(() => {
-                SendMessage();
+                if (photonView.IsMine)
+                {
+                    SendMessage();
+                }
             });
         }
         void SendMessage()

@@ -1,3 +1,4 @@
+using Photon.Pun;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,10 +7,9 @@ using SQLiter;
 using TMPro;
 using Sunbox.Avatars;
 using Photon.Chat.Demo;
-using Photon.Pun;
 
 namespace Player{
-    public class SignUpController : MonoBehaviour
+    public class SignUpController : MonoBehaviourPunCallbacks
     {
         public TMP_InputField usernameInput;
         public TMP_InputField passwordInput;
@@ -27,7 +27,29 @@ namespace Player{
 
         void Start()
         {
-            signupButton.onClick.AddListener(HandleSignup);
+            usernameInput.onValueChanged.RemoveAllListeners();
+            usernameInput.onValueChanged.AddListener((text) =>
+            {
+                if (photonView.IsMine)
+                {
+                    usernameInput.text = text;
+                }
+            });
+            passwordInput.onValueChanged.RemoveAllListeners();
+            passwordInput.onValueChanged.AddListener((text) =>
+            {
+                if (photonView.IsMine)
+                {
+                    passwordInput.text = text;
+                }
+            });
+            signupButton.onClick.AddListener(() =>
+            {
+                if (photonView.IsMine)
+                { 
+                    HandleSignup();
+                }
+            });
             AlertMessage.SetActive(false);
         }
 

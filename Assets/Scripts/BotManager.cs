@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class BotManager : MonoBehaviour
 {
-    public static BotManager Instance;
+    public static BotManager Instance { get; private set; }
     private static int BOT_LIMITS = 1;
     private GameObject[] bot = new GameObject[BOT_LIMITS];
 
@@ -35,7 +35,7 @@ public class BotManager : MonoBehaviour
             {
                 if (botObject != null)
                 {
-                    botObject.GetComponentInChildren<Canvas>().worldCamera = userCamera; // 各Botにカメラ設定
+                    botObject.GetComponentInChildren<Canvas>().worldCamera = userCamera; 
                 }
             }
         }

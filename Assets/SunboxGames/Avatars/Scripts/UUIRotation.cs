@@ -16,18 +16,10 @@ namespace Sunbox.Avatars {
     
         private float _rotationVelocity;
         private bool _dragged;
-        private PhotonView photonView;
 
         private Vector3 _rotationVector = Vector3.up;
-        void Awake()
-        {
-            photonView = GetComponent<PhotonView>();
-            Debug.Log($"photonView is null: {photonView == null}");
-        }
 
         void Start(){
-            photonView = GetComponent<PhotonView>();
-            Debug.Log($"photonView is null: {photonView == null}");
             if (photonView.IsMine)
                 Debug.Log("AvatarRotation photonView.IsMine");
                 GameObject userAvatar = AvatarManager.Instance.GetAvatarForUser(PhotonNetwork.LocalPlayer.UserId);
