@@ -27,6 +27,7 @@ Metaverse Chat App is a Unity-based application that enables users to interact i
 
 ## Technologies Used
 - SQL: Used for managing user data and friend lists.
+- Gemini: Used for AI-powered chatbot functionality, providing users with interactive and intelligent conversations.  
 
 ### Assets
 - [PUN 2](https://assetstore.unity.com/packages/tools/network/pun-2-free-119922) Networking solution for real-time multiplayer functionality.
